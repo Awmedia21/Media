@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Streamly</title>
+<meta name="theme-color" content="#050505">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="icons/icon-192.png">
+<link rel="apple-touch-icon" href="icons/icon-192.png">
+<style>
+:root{--bg:#050505;--fg:#fff;--muted:#9a9aa2;--pill:rgba(60,60,64,.92);--bar:rgba(34,34,38,.94);box-sizing:border-box;padding-top:env(safe-area-inset-top,0px)}
+*{box-sizing:border-box}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;background:var(--bg);color:var(--fg);font-family:"Roboto","Helvetica Neue",Arial,sans-serif;display:flex;justify-content:center}
+.app{width:100%;max-width:480px;min-height:100vh;padding-bottom:130px;position:relative}
+.tabs{display:flex;gap:28px;padding:18px 20px 0;position:sticky;top:0;background:var(--bg);z-index:5;overflow-x:auto}
+.tab{background:none;border:0;color:var(--muted);font:700 20px inherit;font-family:inherit;padding:8px 0 10px;cursor:pointer;border-bottom:3px solid transparent;white-space:nowrap}
+.tab.on{color:var(--fg);border-color:var(--fg)}
+.hd{display:flex;justify-content:space-between;align-items:center;padding:26px 20px 14px}
+.hd h2{margin:0;font-size:26px;font-weight:700}
+.hd svg{width:26px;height:26px;stroke:#fff;fill:none;stroke-width:2.5;stroke-linecap:round;stroke-linejoin:round}
+.row{display:flex;gap:12px;overflow-x:auto;padding:0 20px 6px;scrollbar-width:none}
+.row::-webkit-scrollbar{display:none}
+.wide{flex:0 0 78%;max-width:340px}
+.wide .art{aspect-ratio:16/10;border-radius:18px}
+.tall{flex:0 0 42%;max-width:190px}
+.tall .art{aspect-ratio:2/3;border-radius:14px}
+.art{position:relative;overflow:hidden;display:flex;align-items:flex-end;padding:12px;cursor:pointer;transition:transform .15s}
+.art:active{transform:scale(.97)}
+.art b{font-size:22px;line-height:1;letter-spacing:.5px;text-shadow:0 2px 8px rgba(0,0,0,.6);font-family:Impact,"Arial Narrow",sans-serif;font-weight:400}
+.wide .art b{font-size:26px}
+.bar{position:absolute;left:0;right:0;bottom:0;height:5px;background:rgba(255,255,255,.25)}
+.bar i{display:block;height:100%;background:#e5383b}
+.cap{margin:10px 4px 0;font-size:16px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.tall .cap{font-weight:400;font-size:18px}
+.g1{background:radial-gradient(circle at 70% 25%,#f4a259 0,transparent 35%),linear-gradient(160deg,#1d3557,#6a1b2b)}
+.g2{background:linear-gradient(180deg,#f3d9a4,#e07a5f 55%,#3d405b)}
+.g3{background:radial-gradient(circle at 50% 30%,#eaeaea 0,#5a6169 30%,#0b0d10 75%)}
+.g4{background:linear-gradient(180deg,#4a90a4,#2f5d50 60%,#101a17)}
+.g5{background:linear-gradient(200deg,#ff9f6e,#c8385a 60%,#3b1240)}
+.g6{background:linear-gradient(180deg,#d9c8a8,#8a9a7b 55%,#2f3b2c)}
+.g7{background:radial-gradient(circle at 50% 35%,#c9d6ff 0,#3a3f8f 40%,#0c0c24 85%)}
+.g8{background:linear-gradient(160deg,#ffd166,#ef476f 60%,#2b2d42)}
+.nav{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(20px + env(safe-area-inset-bottom,0px));width:calc(100% - 28px);max-width:452px;display:flex;background:var(--bar);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border-radius:40px;padding:6px;z-index:9}
+.nav button{flex:1;background:none;border:0;color:#b8b8c0;border-radius:34px;padding:10px 0 9px;font:500 15px inherit;font-family:inherit;display:flex;flex-direction:column;align-items:center;gap:4px;cursor:pointer}
+.nav button.on{background:var(--pill);color:#fff;font-weight:700}
+.nav svg{width:30px;height:30px;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.nav .on svg{fill:#fff}
+.top{display:flex;justify-content:space-between;align-items:center;padding:22px 24px 0}
+.logo{height:42px;width:auto}
+.top .search{width:36px;height:36px;stroke:#fff;fill:none;stroke-width:2.2;stroke-linecap:round}
+.hcard{flex:0 0 90%;max-width:440px;position:relative;border-radius:22px;overflow:hidden;aspect-ratio:2/3.1;border:1px solid #333}
+.hcard .art{position:absolute;inset:0;border-radius:0}
+.hov{position:absolute;left:0;right:0;bottom:0;padding:70px 16px 16px;background:linear-gradient(transparent,rgba(0,0,0,.88));text-align:center}
+.ht{display:block;font:400 40px Impact,"Arial Narrow",sans-serif;text-shadow:0 2px 8px #000}
+.gn{color:#ddd;font-size:15px;margin:8px 0 14px}
+.btns{display:flex;gap:10px}
+.btns button{flex:1;height:52px;border:0;border-radius:10px;font-weight:700;font-size:18px;font-family:inherit;cursor:pointer}
+.play{background:#fff;color:#000}.add{background:rgba(70,70,76,.85);color:#fff}
+.ad{margin:24px 20px 0;height:78px;border-radius:8px;background:linear-gradient(90deg,#ff2d75,#ff7a45);display:flex;align-items:center;justify-content:space-between;padding:0 14px;position:relative;overflow:hidden}
+.ad span{font-weight:800;font-size:15px;font-style:italic;line-height:1.15;max-width:34%}
+.ad em{font:900 34px Impact,sans-serif;font-style:normal}
+.ad u{background:#ffd23f;color:#b3123b;text-decoration:none;font-weight:800;border-radius:20px;padding:9px 14px;font-size:14px}
+.ad small{position:absolute;top:0;right:0;background:rgba(0,0,0,.35);font-size:10px;padding:1px 6px}
+.hd{cursor:pointer}
+.top .search{cursor:pointer}
+#sub{position:fixed;inset:0;background:var(--bg);z-index:8;overflow-y:auto;padding:calc(env(safe-area-inset-top,0px) + 8px) 0 130px}
+.subin{max-width:480px;margin:0 auto}
+.subhd{display:flex;align-items:center;gap:6px;padding:8px 14px 16px}
+.subhd h2{margin:0;font-size:24px}
+.back{background:none;border:0;padding:6px;cursor:pointer;color:#fff;flex:none}
+.back svg{width:30px;height:30px;stroke:#fff;fill:none;stroke-width:2.5;stroke-linecap:round;stroke-linejoin:round}
+.subhd input{flex:1;min-width:0;background:#1c1c20;border:0;color:#fff;border-radius:12px;padding:13px 14px;font-size:17px;font-family:inherit}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(104px,1fr));gap:16px 12px;padding:0 16px}
+.grid .tall{max-width:none}
+.grid .tall .cap{font-size:14px;margin-top:8px}
+.grid.w{grid-template-columns:1fr}
+.grid .wide{max-width:none}
+.more{display:block;margin:24px auto 0;padding:12px 30px;border-radius:24px;border:0;background:#2a2a30;color:#fff;font-weight:600;font-size:16px;font-family:inherit;cursor:pointer}
+.note{padding:30px 20px;text-align:center;color:var(--muted);font-size:16px;margin:0}
+.addons{padding:24px 20px}
+.pg{margin:0 0 8px;font-size:28px}
+.note2{color:var(--muted);font-size:15px;margin:6px 0 14px;line-height:1.4}
+.addrow{display:flex;gap:8px}
+.addrow input{flex:1;min-width:0;background:#1c1c20;border:0;color:#fff;border-radius:12px;padding:13px 14px;font-size:16px;font-family:inherit}
+.addrow button,.rm{border:0;border-radius:12px;background:#e5383b;color:#fff;font-weight:700;font-size:15px;font-family:inherit;padding:0 18px;cursor:pointer}
+.rm{background:#2a2a30;padding:10px 14px}
+.ai{background:#151518;border-radius:14px;padding:14px;margin-top:12px;display:flex;gap:10px;align-items:center}
+.ai div{flex:1;min-width:0}
+.ai b{display:block;font-size:17px}
+.ai small{display:block;color:var(--muted);font-size:13px;margin-top:2px}
+.sh{margin:22px 0 6px;font-size:18px}
+.empty{padding:80px 30px;text-align:center;color:var(--muted);font-size:17px}
+:focus-visible{outline:2px solid #fff;outline-offset:3px}
+</style>
+</head>
+<body>
+<div class="app">
+  <div class="top"><svg class="logo" viewBox="0 0 182 40" role="img" aria-label="Streamly"><defs><linearGradient id="lg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ff5a4d"/><stop offset="1" stop-color="#b3122a"/></linearGradient></defs><rect width="40" height="40" rx="11" fill="url(#lg)"/><path d="M15 9.5v15l13-7.5z" fill="#fff" stroke="#fff" stroke-width="3" stroke-linejoin="round"/><path d="M8 32.5q4-4.5 8 0t8 0t8 0" fill="none" stroke="#fff" stroke-width="2.4" stroke-linecap="round" opacity=".9"/><text x="50" y="30" fill="#fff" font-family="'Trebuchet MS','Segoe UI',Arial,sans-serif" font-size="31" font-weight="800" letter-spacing="-.5">Streamly</text></svg><svg class="search" role="button" tabindex="0" viewBox="0 0 24 24" aria-label="Search"><circle cx="10.5" cy="10.5" r="7"/><path d="M16 16l5 5"/></svg></div>
+  <div class="tabs" id="tabs">
+    <button class="tab on">Home</button><button class="tab">Movies</button><button class="tab">TV Shows</button>
+  </div>
+  <div id="view"></div>
+  <p style="padding:24px 20px 0;font-size:12px;color:var(--muted)">This product uses the TMDB API but is not endorsed or certified by TMDB.</p>
+</div>
+<div id="sub" hidden></div>
+<nav class="nav" id="nav">
+  <button class="on" data-l="Home"><svg viewBox="0 0 24 24"><path d="M3 11l9-8 9 8v9a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z"/></svg>Home</button>
+  <button data-l="Discover"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M15.5 8.5l-2 5-5 2 2-5z"/></svg>Discover</button>
+  <button data-l="My List"><svg viewBox="0 0 24 24"><path d="M6 3h12v18l-6-4-6 4z"/></svg>My List</button>
+  <button data-l="More"><svg viewBox="0 0 24 24"><path d="M4 7h16M4 12h16M4 17h16"/></svg>More</button>
+</nav>
+<script>
+var arrow='<svg viewBox="0 0 24 24"><path d="M9 5l7 7-7 7"/></svg>';
+var cont=[["Night Signal",'g1',62],["Harbor Lights S1E1",'g2',30]];
+var movies=[["Night Signal",'g1'],["Hollow Road",'g3'],["The End of Elm Lane",'g4'],["Golden Hour",'g8']];
+var shows=[["Sunday Kitchen",'g5'],["The Orchard",'g6'],["Reach",'g7'],["Paper Moons",'g2']];
+function hd(t){return '<div class="hd" role="button" tabindex="0" data-t="'+esc(t)+'"><h2>'+esc(t)+'</h2>'+arrow+'</div>'}
+function safe(u){return /^https?:\/\//.test(u||'')?encodeURI(u).replace(/['"()]/g,function(c){return '%'+c.charCodeAt(0).toString(16)}):''}
+function bg(a){return safe(a[3])?' style="background:#111 url('+safe(a[3])+') center/cover"':''}
+function lab(a){return safe(a[3])?'':'<b>'+esc(a[0]).toUpperCase()+'</b>'}
+function wide(a){return '<div class="wide"><div class="art '+a[1]+'"'+bg(a)+'>'+lab(a)+'<div class="bar"><i style="width:'+a[2]+'%"></i></div></div><div class="cap">'+a[0]+'</div></div>'}
+function tall(a){return '<div class="tall"><div class="art '+a[1]+'"'+bg(a)+'>'+lab(a)+'</div><div class="cap">'+a[0]+'</div></div>'}
+var most=[["Iron Throne",'g3'],["Dark Frontier",'g1'],["The Vault Job",'g5'],["Harbor Lights",'g2']];
+var topRated=[["Teach the Class",'g7'],["Cattle Country",'g6'],["Perfect Crown",'g8'],["Long Winter",'g4']];
+var kids=[["Bubble Kingdom",'g8'],["Little Comet",'g7'],["Fox and Fern",'g6'],["Sea Song",'g4']];
+function sec(t,l){return hd(t)+'<div class="row">'+l.map(tall).join('')+'</div>'}
+function hero(){return '<div class="row">'+movies.slice(0,3).map(function(a){return '<div class="hcard"><div class="art '+a[1]+'"'+bg(a)+'></div><div class="hov">'+(a[3]?'':'<b class="ht">'+a[0]+'</b>')+'<div class="gn">'+(a[4]||'Drama \u2022 Mystery \u2022 Thriller')+'</div><div class="btns"><button class="play">\u25B6 PLAY NOW</button><button class="add">+ My List</button></div></div></div>'}).join('')+'</div>'}
+function ad(){return '<div class="ad"><span>Shop more, save massive!</span><em>90% OFF</em><u>Shop now</u><small>Ad</small></div>'}
+function home(){return hero()+hd('Continue Watching')+'<div class="row">'+cont.map(wide).join('')+'</div>'+sec('Now Playing Movies',movies)+sec('Popular TV Shows',shows)+sec('Most Watched TV Shows',most)+ad()+sec('Top Rated TV Shows Of All Time',topRated)+sec('Films For Kids And Family',kids)+arows()}
+function movs(){return sec('Now Playing Movies',movies)+sec('Films For Kids And Family',kids)+arows('movie')}
+function tv(){return sec('Popular TV Shows',shows)+sec('Most Watched TV Shows',most)+ad()+sec('Top Rated TV Shows Of All Time',topRated)+arows('series')}
+function none(t){return '<div class="empty">'+t+' is empty for now. Titles you add will show up here.</div>'}
+var views={Home:home,Movies:movs,"TV Shows":tv};
+var v=document.getElementById('view');
+var ADD=null,AROWS=[],ARMAP={};
+function show(n){v.innerHTML=views[n]()}
+show('Home');
+// Paste your TMDB v3 API key or v4 read access token here
+var KEY='';try{KEY=localStorage.getItem('streamly.tmdb')||''}catch(e){}
+KEY=KEY||'PASTE_YOUR_TMDB_KEY_HERE';
+function api(p){var h={},u='https://api.themoviedb.org/3'+p;if(KEY.length>40)h.Authorization='Bearer '+KEY;else u+=(p.indexOf('?')>-1?'&':'?')+'api_key='+KEY;return fetch(u,{headers:h}).then(function(r){return r.json()})}
+var GN={28:'Action',12:'Adventure',16:'Animation',35:'Comedy',80:'Crime',99:'Documentary',18:'Drama',10751:'Family',14:'Fantasy',36:'History',27:'Horror',10402:'Music',9648:'Mystery',10749:'Romance',878:'Science Fiction',53:'Thriller',10752:'War',37:'Western',10765:'Sci-Fi & Fantasy',10759:'Action & Adventure'};
+function load(){
+  if(!KEY||KEY.indexOf('PASTE')===0)return;
+  var I='https://image.tmdb.org/t/p/';
+  function mp(r,f,g){return r.results.filter(function(x){return x.poster_path}).slice(0,12).map(function(x){return [x.title||x.name,g,0,I+'w500'+x.poster_path,(x.genre_ids||[]).slice(0,3).map(function(i){return GN[i]}).filter(Boolean).join(' \u2022 ')]})}
+  Promise.all([api('/movie/now_playing'),api('/tv/popular'),api('/trending/tv/week'),api('/tv/top_rated'),api('/discover/movie?with_genres=10751')]).then(function(r){
+    movies=mp(r[0],0,'g1');shows=mp(r[1],0,'g5');most=mp(r[2],0,'g3');topRated=mp(r[3],0,'g7');kids=mp(r[4],0,'g8');
+    cont=r[0].results.filter(function(x){return x.backdrop_path}).slice(0,2).map(function(x,i){return [x.title,'g1',[62,30][i],I+'w780'+x.backdrop_path]});
+    rerender();
+  }).catch(function(){});
+}
+load();
+document.getElementById('tabs').addEventListener('click',function(e){
+  var b=e.target.closest('.tab');if(!b)return;
+  document.querySelectorAll('.tab').forEach(function(t){t.classList.remove('on')});
+  b.classList.add('on');document.querySelectorAll('.nav button').forEach(function(t){t.classList.toggle('on',t.dataset.l==='Home')});show(b.textContent);
+});
+document.getElementById('nav').addEventListener('click',function(e){
+  var b=e.target.closest('button');if(!b)return;
+  document.querySelectorAll('.nav button').forEach(function(t){t.classList.remove('on')});
+  b.classList.add('on');
+  var l=b.dataset.l;closeSub();
+  if(l==='Home')show(document.querySelector('.tab.on').textContent);else if(l==='More')v.innerHTML=addonsPage();else v.innerHTML=none(l);
+});
+
+var IMG='https://image.tmdb.org/t/p/';
+var EP={'Now Playing Movies':'/movie/now_playing','Popular TV Shows':'/tv/popular','Most Watched TV Shows':'/trending/tv/week','Top Rated TV Shows Of All Time':'/tv/top_rated','Films For Kids And Family':'/discover/movie?with_genres=10751'};
+function LST(t){return {'Continue Watching':cont,'Now Playing Movies':movies,'Popular TV Shows':shows,'Most Watched TV Shows':most,'Top Rated TV Shows Of All Time':topRated,'Films For Kids And Family':kids}[t]||[]}
+function hasKey(){return !!KEY&&KEY.indexOf('PASTE')!==0}
+function esc(s){return s.replace(/[&<>"']/g,function(c){return '&#'+c.charCodeAt(0)+';'})}
+function mk(r,g){return (r.results||[]).filter(function(x){return x.poster_path&&x.media_type!=='person'}).map(function(x){return [x.title||x.name,g,0,IMG+'w500'+x.poster_path]})}
+var sub=document.getElementById('sub'),moreFn=null,qTok=0;
+var BACK='<button class="back" aria-label="Back"><svg viewBox="0 0 24 24"><path d="M15 5l-7 7 7 7"/></svg></button>';
+function openSub(h){sub.innerHTML='<div class="subin">'+h+'</div>';sub.hidden=false}
+function closeSub(){sub.hidden=true;sub.innerHTML='';moreFn=null;qTok++}
+function openSection(t){
+  var ar=ARMAP[t],items=(ar?ar.items:LST(t)).slice(),page=1,ep=EP[t],wm=t==='Continue Watching',canMore=(ep&&hasKey())||(ar&&ex(ar.c).indexOf('skip')>=0);
+  function draw(){
+    var y=sub.scrollTop;
+    openSub('<div class="subhd">'+BACK+'<h2>'+esc(t)+'</h2></div><div class="grid'+(wm?' w':'')+'">'+items.map(wm?wide:tall).join('')+'</div>'+(canMore?'<button class="more">Load more</button>':'')+(!hasKey()&&!ar?'<p class="note">Add your TMDB key to load the full list.</p>':''));
+    sub.scrollTop=y;
+  }
+  moreFn=function(){
+    page++;var bt=sub.querySelector('.more');if(bt){bt.textContent='Loading...';bt.disabled=true}
+    var p=ar?fetchJ(acat(ar.a,ar.c,'skip='+items.length)).then(toItems):api(ep+(ep.indexOf('?')>-1?'&':'?')+'page='+page).then(function(r){return mk(r,'g1')});
+    p.then(function(n){
+      var seen={};items.forEach(function(x){seen[x[0]+x[3]]=1});
+      n=n.filter(function(x){return !seen[x[0]+x[3]]});if(!n.length)canMore=false;
+      items=items.concat(n);draw();
+    }).catch(function(){draw()});
+  };
+  draw();sub.scrollTop=0;
+}
+function showRes(items,q){var r=document.getElementById('res');if(!r)return;r.innerHTML=items.length?'<div class="grid">'+items.map(tall).join('')+'</div>':'<p class="note">No results for \u201C'+esc(q)+'\u201D.</p>'}
+function run(q){
+  var tok=++qTok,r=document.getElementById('res');
+  if(!q){if(r)r.innerHTML='<p class="note">Type a title to start searching.</p>';return}
+  var ps=[];
+  if(hasKey())ps.push(api('/search/multi?query='+encodeURIComponent(q)).then(function(x){return mk(x,'g1')}).catch(function(){return []}));
+  else{var lq=q.toLowerCase();ps.push(Promise.resolve([].concat(movies,shows,most,topRated,kids).filter(function(a){return a[0].toLowerCase().indexOf(lq)>=0})))}
+  ADD.forEach(function(a){searchCats(a).forEach(function(c){ps.push(fetchJ(acat(a,c,'search='+encodeURIComponent(q))).then(toItems).catch(function(){return []}))})});
+  Promise.all(ps).then(function(g){if(tok!==qTok)return;var seen={};showRes([].concat.apply([],g).filter(function(a){var k=a[0].toLowerCase();if(seen[k])return false;seen[k]=1;return true}),q)});
+}
+function openSearch(){
+  openSub('<div class="subhd">'+BACK+'<input id="q" type="search" placeholder="Search movies and shows" autocomplete="off" aria-label="Search"></div><div id="res"><p class="note">Type a title to start searching.</p></div>');
+  var q=document.getElementById('q'),tm;q.focus();
+  q.addEventListener('input',function(){clearTimeout(tm);tm=setTimeout(function(){run(q.value.trim())},300)});
+}
+sub.addEventListener('click',function(e){if(e.target.closest('.back'))closeSub();else if(e.target.closest('.more')&&moreFn)moreFn()});
+v.addEventListener('click',function(e){var h=e.target.closest('.hd');if(h)openSection(h.dataset.t)});
+v.addEventListener('keydown',function(e){var h=e.target.closest('.hd');if(h&&e.key==='Enter')openSection(h.dataset.t)});
+var sb=document.querySelector('.search');sb.addEventListener('click',openSearch);sb.addEventListener('keydown',function(e){if(e.key==='Enter')openSearch()});
+
+try{ADD=JSON.parse(localStorage.getItem('streamly.addons')||'null')}catch(e){}
+if(!Array.isArray(ADD))ADD=[{url:'https://v3-cinemeta.strem.io/manifest.json',manifest:{id:'com.linvo.cinemeta',name:'Cinemeta',version:'3',description:'Movie and series catalogs',catalogs:[{type:'movie',id:'top',name:'Popular',extra:[{name:'search'},{name:'skip'}]},{type:'series',id:'top',name:'Popular',extra:[{name:'search'},{name:'skip'}]}]}}];
+function store(){try{localStorage.setItem('streamly.addons',JSON.stringify(ADD))}catch(e){}}
+function fetchJ(u){return fetch(u).then(function(r){if(!r.ok)throw 0;return r.json()})}
+function abase(a){return a.url.replace(/\/manifest\.json.*$/,'')}
+function acat(a,c,e){return abase(a)+'/catalog/'+encodeURIComponent(c.type)+'/'+encodeURIComponent(c.id)+(e?'/'+e:'')+'.json'}
+function ex(c){return (c.extra||[]).map(function(e){return e.name}).concat(c.extraSupported||[])}
+function cats(a){return (a.manifest.catalogs||[]).filter(function(c){return c.type&&c.id&&!(c.extra||[]).some(function(e){return e.isRequired})&&!(c.extraRequired||[]).length}).slice(0,4)}
+function searchCats(a){return (a.manifest.catalogs||[]).filter(function(c){return c.type&&c.id&&ex(c).indexOf('search')>=0&&!(c.extra||[]).some(function(e){return e.isRequired&&e.name!=='search'})&&!(c.extraRequired||[]).some(function(n){return n!=='search'})}).slice(0,3)}
+function toItems(r){return ((r&&r.metas)||[]).filter(function(m){return m&&(m.name||m.id)}).map(function(m){return [String(m.name||m.id),'g5',0,m.poster||'']})}
+function arows(type){return AROWS.filter(function(r){return !type||r.c.type===type}).map(function(r){return sec(r.t,r.items)}).join('')}
+function rerender(){var n=document.querySelector('.nav button.on');if(n&&n.dataset.l==='Home'&&sub.hidden)show(document.querySelector('.tab.on').textContent)}
+function loadAddonRows(){
+  var jobs=[];
+  ADD.forEach(function(a){cats(a).forEach(function(c){jobs.push(fetchJ(acat(a,c)).then(function(r){return {a:a,c:c,items:toItems(r)}}).catch(function(){return null}))})});
+  Promise.all(jobs).then(function(rs){
+    AROWS=[];ARMAP={};
+    rs.forEach(function(x){
+      if(!x||!x.items.length)return;
+      var t=String(x.c.name||x.c.id)+' '+(x.c.type==='movie'?'Movies':x.c.type==='series'?'Series':x.c.type);
+      if(ARMAP[t])t+=' ('+x.a.manifest.name+')';
+      x.t=t;AROWS.push(x);ARMAP[t]=x;
+    });
+    rerender();
+  });
+}
+function addonList(){return ADD.length?ADD.map(function(a,i){var m=a.manifest,n=(m.catalogs||[]).length;return '<div class="ai"><div><b>'+esc(String(m.name))+' <small>v'+esc(String(m.version||''))+'</small></b><small>'+esc(String(m.description||'').slice(0,90))+'</small><small>'+(n?n+' catalog'+(n>1?'s':''):'No catalogs to show')+'</small></div><button class="rm" data-i="'+i+'">Remove</button></div>'}).join(''):'<p class="note2">No add-ons installed.</p>'}
+function addonsPage(){return '<div class="addons"><h2 class="pg">Settings</h2><p class="note2">Paste an add-on manifest.json link to add its catalogs to Home and Search. Streamly only browses catalogs and does not play anything.</p><h3 class="sh">Posters</h3><p class="note2">'+(hasKey()?'A TMDB key is saved on this device.':'Add a TMDB API key or read token to load real posters.')+'</p><div class="addrow"><input id="tkey" type="password" placeholder="TMDB key or read token" autocomplete="off" aria-label="TMDB key"><button id="ksave">Save</button></div><h3 class="sh">Add-ons</h3><div class="addrow"><input id="murl" type="url" placeholder="https://example.com/manifest.json" aria-label="Manifest link"><button id="minst">Install</button></div><div id="mmsg" class="note2" role="status"></div><div id="mlist">'+addonList()+'</div></div>'}
+function msg(t){var m=document.getElementById('mmsg');if(m)m.textContent=t}
+function install(){
+  var i=document.getElementById('murl'),u=i.value.trim().replace(/^stremio:\/\//,'https://');
+  if(!/^https?:\/\/.+/.test(u)){msg('Enter a link that starts with https://');return}
+  if(u.indexOf('manifest.json')<0)u=u.replace(/\/+$/,'')+'/manifest.json';
+  msg('Checking add-on...');
+  fetchJ(u).then(function(m){
+    if(!m||!m.id||!m.name||!Array.isArray(m.resources))throw 0;
+    if(ADD.some(function(a){return a.manifest.id===m.id})){msg(m.name+' is already installed.');return}
+    ADD.push({url:u,manifest:{id:String(m.id),name:String(m.name),version:String(m.version||''),description:String(m.description||''),catalogs:Array.isArray(m.catalogs)?m.catalogs:[]}});
+    store();i.value='';document.getElementById('mlist').innerHTML=addonList();
+    msg('Installed '+m.name+'.');loadAddonRows();
+  }).catch(function(){msg('Could not read that manifest. Check the link, or the add-on may block access from browsers.')});
+}
+v.addEventListener('click',function(e){
+  if(e.target.closest('#minst'))install();
+  if(e.target.closest('#ksave')){var k=document.getElementById('tkey').value.trim();try{k?localStorage.setItem('streamly.tmdb',k):localStorage.removeItem('streamly.tmdb')}catch(x){}location.reload()}
+  var r=e.target.closest('.rm');
+  if(r){ADD.splice(+r.dataset.i,1);store();document.getElementById('mlist').innerHTML=addonList();msg('Removed.');loadAddonRows()}
+});
+loadAddonRows();
+if('serviceWorker' in navigator&&!window.Capacitor&&/^https?:/.test(location.protocol)){navigator.serviceWorker.register('sw.js').catch(function(){})}
+</script>
+</body>
+</html>
