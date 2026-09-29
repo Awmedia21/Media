@@ -109,6 +109,8 @@ body{margin:0;background:var(--bg);color:var(--fg);font-family:"Roboto","Helveti
 #player video{width:100%;max-height:100%}
 .pclose{position:absolute;top:calc(env(safe-area-inset-top,0px) + 10px);left:10px;z-index:2;background:rgba(0,0,0,.55);color:#fff;border:0;border-radius:50%;width:44px;height:44px;font-size:24px;cursor:pointer}
 .toast{position:fixed;left:50%;transform:translateX(-50%);bottom:130px;background:#2a2a30;color:#fff;padding:12px 18px;border-radius:22px;z-index:40;font-size:15px}
+.chk{display:block;margin-top:14px;font-size:15px;color:#ddd}
+.chk input{margin-right:8px;width:18px;height:18px;vertical-align:-3px}
 .empty{padding:80px 30px;text-align:center;color:var(--muted);font-size:17px}
 :focus-visible{outline:2px solid #fff;outline-offset:3px}
 </style>
@@ -135,7 +137,7 @@ var cont=[["Night Signal",'g1',62],["Harbor Lights S1E1",'g2',30]];
 var movies=[["Night Signal",'g1'],["Hollow Road",'g3'],["The End of Elm Lane",'g4'],["Golden Hour",'g8']];
 var shows=[["Sunday Kitchen",'g5'],["The Orchard",'g6'],["Reach",'g7'],["Paper Moons",'g2']];
 function hd(t){return '<div class="hd" role="button" tabindex="0" data-t="'+esc(t)+'"><h2>'+esc(t)+'</h2>'+arrow+'</div>'}
-function safe(u){return /^https?:\/\//.test(u||'')?encodeURI(u).replace(/['"()]/g,function(c){return '%'+c.charCodeAt(0).toString(16)}):''}
+function safe(u){return /^https?:\/\//.test(u||'')?u.replace(/['"()\s<>]/g,function(c){return '%'+c.charCodeAt(0).toString(16)}):''}
 function bg(a){return safe(a[3])?' style="background:#111 url('+safe(a[3])+') center/cover"':''}
 function lab(a){return safe(a[3])?'':'<b>'+esc(a[0]).toUpperCase()+'</b>'}
 function wide(a){return '<div class="wide"><div class="art '+a[1]+'"'+kk(a)+bg(a)+'>'+lab(a)+'<div class="bar"><i style="width:'+a[2]+'%"></i></div></div><div class="cap">'+a[0]+'</div></div>'}
@@ -144,15 +146,15 @@ var most=[["Iron Throne",'g3'],["Dark Frontier",'g1'],["The Vault Job",'g5'],["H
 var topRated=[["Teach the Class",'g7'],["Cattle Country",'g6'],["Perfect Crown",'g8'],["Long Winter",'g4']];
 var kids=[["Bubble Kingdom",'g8'],["Little Comet",'g7'],["Fox and Fern",'g6'],["Sea Song",'g4']];
 function sec(t,l){return hd(t)+'<div class="row">'+l.map(tall).join('')+'</div>'}
-function hero(){return '<div class="row">'+movies.slice(0,3).map(function(a){return '<div class="hcard" data-t="'+esc(a[0])+'"><div class="art '+a[1]+'"'+kk(a)+bg(a)+'></div><div class="hov">'+(a[3]?'':'<b class="ht">'+a[0]+'</b>')+'<div class="gn">'+(a[4]||'Drama \u2022 Mystery \u2022 Thriller')+'</div><div class="btns"><button class="play">\u25B6 PLAY NOW</button><button class="add">+ My List</button></div></div></div>'}).join('')+'</div>'}
+function hero(){var H=HEROES();if(!H.length)return '';return '<div class="row">'+H.map(function(a){return '<div class="hcard" data-t="'+esc(a[0])+'" data-pk="'+esc(String(a[5]||''))+'" data-pt="'+esc(String(a[6]||''))+'"><div class="art '+a[1]+'"'+kk(a)+bg(a)+'></div><div class="hov">'+(a[3]?'':'<b class="ht">'+a[0]+'</b>')+'<div class="gn">'+(a[4]||'Drama \u2022 Mystery \u2022 Thriller')+'</div><div class="btns"><button class="play">\u25B6 PLAY NOW</button><button class="add">+ My List</button></div></div></div>'}).join('')+'</div>'}
 function ad(){return '<div class="ad"><span>Shop more, save massive!</span><em>90% OFF</em><u>Shop now</u><small>Ad</small></div>'}
-function home(){return hero()+hd('Continue Watching')+'<div class="row">'+cont.map(wide).join('')+'</div>'+prows()+sec('Now Playing Movies',movies)+sec('Popular TV Shows',shows)+sec('Most Watched TV Shows',most)+ad()+sec('Top Rated TV Shows Of All Time',topRated)+sec('Films For Kids And Family',kids)+arows()}
-function movs(){return prows('movie')+sec('Now Playing Movies',movies)+sec('Films For Kids And Family',kids)+arows('movie')}
-function tv(){return prows('series')+sec('Popular TV Shows',shows)+sec('Most Watched TV Shows',most)+ad()+sec('Top Rated TV Shows Of All Time',topRated)+arows('series')}
+function home(){if(plexOnly())return hero()+plexHome();return hero()+hd('Continue Watching')+'<div class="row">'+cont.map(wide).join('')+'</div>'+prows()+sec('Now Playing Movies',movies)+sec('Popular TV Shows',shows)+sec('Most Watched TV Shows',most)+ad()+sec('Top Rated TV Shows Of All Time',topRated)+sec('Films For Kids And Family',kids)+arows()}
+function movs(){if(plexOnly())return plexHome('movie');return prows('movie')+sec('Now Playing Movies',movies)+sec('Films For Kids And Family',kids)+arows('movie')}
+function tv(){if(plexOnly())return plexHome('series');return prows('series')+sec('Popular TV Shows',shows)+sec('Most Watched TV Shows',most)+ad()+sec('Top Rated TV Shows Of All Time',topRated)+arows('series')}
 function none(t){return '<div class="empty">'+t+' is empty for now. Titles you add will show up here.</div>'}
 var views={Home:home,Movies:movs,"TV Shows":tv};
 var v=document.getElementById('view');
-var ADD=null,AROWS=[],ARMAP={},PL=null,PXON=false,PROWS=[],TP=null,LIST=[];
+var ADD=null,AROWS=[],ARMAP={},PL=null,PXON=false,PROWS=[],TP=null,LIST=[],HERO=[],PXST=0;
 function show(n){v.innerHTML=views[n]()}
 show('Home');
 // Paste your TMDB v3 API key or v4 read access token here
@@ -220,7 +222,7 @@ function run(q){
   if(hasKey())ps.push(api('/search/multi?query='+encodeURIComponent(q)).then(function(x){return mk(x,'g1')}).catch(function(){return []}));
   else{var lq=q.toLowerCase();ps.push(Promise.resolve([].concat(movies,shows,most,topRated,kids).filter(function(a){return a[0].toLowerCase().indexOf(lq)>=0})))}
   ADD.forEach(function(a){searchCats(a).forEach(function(c){ps.push(fetchJ(acat(a,c,'search='+encodeURIComponent(q))).then(toItems).catch(function(){return []}))})});
-  Promise.all(ps).then(function(g){if(tok!==qTok)return;var seen={};showRes([].concat.apply([],g).filter(function(a){var k=a[0].toLowerCase();if(seen[k])return false;seen[k]=1;return true}),q)});
+  Promise.all(plexOnly()?[ps[0]]:ps).then(function(g){if(tok!==qTok)return;var seen={};showRes([].concat.apply([],g).filter(function(a){var k=a[0].toLowerCase();if(seen[k])return false;seen[k]=1;return true}),q)});
 }
 function openSearch(){
   openSub('<div class="subhd">'+BACK+'<input id="q" type="search" placeholder="Search movies and shows" autocomplete="off" aria-label="Search"></div><div id="res"><p class="note">Type a title to start searching.</p></div>');
@@ -300,7 +302,7 @@ function pitem(m,wide){
   return [String(t),'g1',pr,img,(m.Genre||[]).slice(0,3).map(function(g){return g.tag}).join(' \u2022 '),'plex:'+m.ratingKey];
 }
 function prows(type){return PROWS.filter(function(r){return !type||r.c.type===type}).map(function(r){return sec(r.t,r.items)}).join('')}
-function plexBox(){return PL?'<p class="note2">Connected to '+esc(String(PL.server.name))+'.</p><div class="addrow"><button id="pout">Sign out</button></div>':'<p class="note2">Sign in to play your Plex library inside Streamly.</p><div class="addrow"><button id="pin">Sign in with Plex</button></div>'}
+function plexBox(){return PL?'<p class="note2">Connected to '+esc(String(PL.server.name))+'.</p><div class="addrow"><button id="pout">Sign out</button></div><label class="chk"><input type="checkbox" id="xrows"'+(showX()?' checked':'')+'> Also show TMDB and add-on rows on Home</label>':'<p class="note2">Sign in to play your Plex library inside Streamly.</p><div class="addrow"><button id="pin">Sign in with Plex</button></div>'}
 function pmsg(h){var m=document.getElementById('pmsg');if(m)m.innerHTML=h}
 function plexSignIn(){
   pmsg('Contacting Plex...');
@@ -336,7 +338,7 @@ function loadPlex(){
   if(!PL)return;
   pget('/library/sections').then(function(r){
     var ds=(r.MediaContainer.Directory||[]).filter(function(d){return d.type==='movie'||d.type==='show'});
-    var jobs=ds.map(function(d){return pget('/library/sections/'+d.key+'/all','sort=addedAt:desc&X-Plex-Container-Start=0&X-Plex-Container-Size=30').then(function(x){return {d:d,items:(x.MediaContainer.Metadata||[]).map(function(m){return pitem(m)})}}).catch(function(){return null})});
+    var jobs=ds.map(function(d){return pget('/library/sections/'+d.key+'/all','sort=addedAt:desc&X-Plex-Container-Start=0&X-Plex-Container-Size=30').then(function(x){return {d:d,raw:x.MediaContainer.Metadata||[],items:(x.MediaContainer.Metadata||[]).map(function(m){return pitem(m)})}}).catch(function(){return null})});
     jobs.push(pget('/library/onDeck').then(function(x){return {od:(x.MediaContainer.Metadata||[]).map(function(m){return pitem(m,true)})}}).catch(function(){return null}));
     return Promise.all(jobs);
   }).then(function(rs){
@@ -344,14 +346,15 @@ function loadPlex(){
     rs.forEach(function(x){
       if(!x)return;
       if(x.od){if(x.od.length){cont=x.od;PXON=true}return}
+      if(x.raw&&!HERO.length&&x.raw.length)HERO=x.raw.slice(0,3).map(function(m){return [String(m.title),'g1',0,pimg(m.thumb,600,900),(m.Genre||[]).slice(0,3).map(function(g){return g.tag}).join(' \u2022 '),'plex:'+m.ratingKey,m.type]});
       if(!x.items.length)return;
       var d=x.d,t=d.title+' on Plex';
       var row={t:t,items:x.items,c:{type:d.type==='movie'?'movie':'series'},more:function(n){return pget('/library/sections/'+d.key+'/all','sort=addedAt:desc&X-Plex-Container-Start='+n+'&X-Plex-Container-Size=30').then(function(y){return (y.MediaContainer.Metadata||[]).map(function(m){return pitem(m)})})}};
       PROWS.push(row);ARMAP[t]=row;
     });
-    pmsg(PROWS.length?'Your Plex libraries are on the Home page.':'Connected, but no movie or show libraries were found.');
+    PXST=1;pmsg(PROWS.length?'Your Plex libraries are on the Home page.':'Connected, but no movie or show libraries were found.');
     rerender();
-  }).catch(function(){pmsg('Could not load your Plex libraries.')});
+  }).catch(function(){PXST=2;pmsg('Could not load your Plex libraries.');rerender()});
 }
 function plexSearch(q){if(!PL)return Promise.resolve([]);return pget('/hubs/search','query='+encodeURIComponent(q)+'&limit=12').then(function(r){var o=[];(r.MediaContainer.Hub||[]).forEach(function(h){if(h.type==='movie'||h.type==='show')(h.Metadata||[]).forEach(function(m){o.push(pitem(m))})});return o}).catch(function(){return []})}
 function lkey(a){return a[0]+'|'+(a[5]||'')}
@@ -421,13 +424,24 @@ function hit(e){
   var p=t.closest('[data-play]');if(p){playItem(p.dataset.play);return}
   var l=t.closest('[data-list]');if(l&&TP){toggle(TP);l.textContent=inList(TP)?'\u2713 In My List':'+ My List';return}
   var s=t.closest('.sbtn');if(s){document.querySelectorAll('.sbtn').forEach(function(x){x.classList.remove('on')});s.classList.add('on');loadEps(s.dataset.s);return}
-  var hp=t.closest('.hcard .play');if(hp){heroPlay(hp.closest('.hcard').dataset.t);return}
-  var ha=t.closest('.hcard .add');if(ha){var n=ha.closest('.hcard').dataset.t,it=movies.filter(function(x){return x[0]===n})[0];if(it)toggle(it.slice(0,5));return}
+  var hp=t.closest('.hcard .play');if(hp){var hc=hp.closest('.hcard');if(hc.dataset.pk&&PL){if(hc.dataset.pt==='movie')playItem(hc.dataset.pk.slice(5));else openTitle(hc.dataset.pk.slice(5))}else heroPlay(hc.dataset.t);return}
+  var ha=t.closest('.hcard .add');if(ha){var n=ha.closest('.hcard').dataset.t,it=HEROES().filter(function(x){return x[0]===n})[0];if(it)toggle(it.slice(0,6));return}
   if(t.closest('#pin')){plexSignIn();return}
   if(t.closest('#pout')){try{localStorage.removeItem('streamly.plex')}catch(x){}location.reload()}
 }
 v.addEventListener('click',hit);sub.addEventListener('click',hit);
 loadPlex();
+
+function showX(){try{return localStorage.getItem('streamly.extra')==='1'}catch(e){return false}}
+function plexOnly(){return !!PL&&!showX()}
+function HEROES(){return PL&&HERO.length?HERO:(plexOnly()?[]:movies.slice(0,3))}
+function plexHome(t){
+  if(PXST===0)return '<p class="note">Loading your Plex library...</p>';
+  var r=prows(t);
+  if(!t&&PXON)r=hd('Continue Watching')+'<div class="row">'+cont.map(wide).join('')+'</div>'+r;
+  return r||'<p class="note">No Plex libraries found. Check More, Settings.</p>';
+}
+v.addEventListener('change',function(e){if(e.target.id==='xrows'){try{localStorage.setItem('streamly.extra',e.target.checked?'1':'0')}catch(x){}}});
 </script>
 </body>
 </html>
