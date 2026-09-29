@@ -3,11 +3,11 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Streamly</title>
+<title>Plex Media Hub</title>
 <meta name="theme-color" content="#050505">
 <link rel="manifest" href="manifest.webmanifest">
-<link rel="icon" href="icons/icon-192.png">
-<link rel="apple-touch-icon" href="icons/icon-192.png">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 100 100%27><rect width=%27100%27 height=%27100%27 rx=%2725%27 fill=%27%23e5383b%27/><text x=%2750%%27 y=%2758%%27 font-size=%2750%27 font-weight=%27bold%27 fill=%27%23fff%27 text-anchor=%27middle%27 dominant-baseline=%27middle%27 font-family=%27sans-serif%27>P</text></svg>">
+<link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 100 100%27><rect width=%27100%27 height=%27100%27 rx=%2725%27 fill=%27%23e5383b%27/><text x=%2750%%27 y=%2758%%27 font-size=%2750%27 font-weight=%27bold%27 fill=%27%23fff%27 text-anchor=%27middle%27 dominant-baseline=%27middle%27 font-family=%27sans-serif%27>P</text></svg>">
 <style>
 :root{--bg:#050505;--fg:#fff;--muted:#9a9aa2;--pill:rgba(60,60,64,.92);--bar:rgba(34,34,38,.94);box-sizing:border-box;padding-top:env(safe-area-inset-top,0px)}
 *{box-sizing:border-box}
@@ -117,7 +117,7 @@ body{margin:0;background:var(--bg);color:var(--fg);font-family:"Roboto","Helveti
 </head>
 <body>
 <div class="app">
-  <div class="top"><svg class="logo" viewBox="0 0 182 40" role="img" aria-label="Streamly"><defs><linearGradient id="lg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ff5a4d"/><stop offset="1" stop-color="#b3122a"/></linearGradient></defs><rect width="40" height="40" rx="11" fill="url(#lg)"/><path d="M15 9.5v15l13-7.5z" fill="#fff" stroke="#fff" stroke-width="3" stroke-linejoin="round"/><path d="M8 32.5q4-4.5 8 0t8 0t8 0" fill="none" stroke="#fff" stroke-width="2.4" stroke-linecap="round" opacity=".9"/><text x="50" y="30" fill="#fff" font-family="'Trebuchet MS','Segoe UI',Arial,sans-serif" font-size="31" font-weight="800" letter-spacing="-.5">Streamly</text></svg><svg class="search" role="button" tabindex="0" viewBox="0 0 24 24" aria-label="Search"><circle cx="10.5" cy="10.5" r="7"/><path d="M16 16l5 5"/></svg></div>
+  <div class="top"><svg class="logo" viewBox="0 0 210 40" role="img" aria-label="Plex Media Hub"><defs><linearGradient id="lg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ff5a4d"/><stop offset="1" stop-color="#b3122a"/></linearGradient></defs><rect width="40" height="40" rx="11" fill="url(#lg)"/><path d="M15 9.5v15l13-7.5z" fill="#fff" stroke="#fff" stroke-width="3" stroke-linejoin="round"/><path d="M8 32.5q4-4.5 8 0t8 0t8 0" fill="none" stroke="#fff" stroke-width="2.4" stroke-linecap="round" opacity=".9"/><text x="50" y="27" fill="#fff" font-family="'Trebuchet MS','Segoe UI',Arial,sans-serif" font-size="20" font-weight="800" letter-spacing="-.5">Plex Media Hub</text></svg><svg class="search" role="button" tabindex="0" viewBox="0 0 24 24" aria-label="Search"><circle cx="10.5" cy="10.5" r="7"/><path d="M16 16l5 5"/></svg></div>
   <div class="tabs" id="tabs">
     <button class="tab on">Home</button><button class="tab">Movies</button><button class="tab">TV Shows</button>
   </div>
@@ -158,7 +158,7 @@ var ADD=null,AROWS=[],ARMAP={},PL=null,PXON=false,PROWS=[],TP=null,LIST=[],HERO=
 function show(n){v.innerHTML=views[n]()}
 show('Home');
 // Paste your TMDB v3 API key or v4 read access token here
-var KEY='';try{KEY=localStorage.getItem('streamly.tmdb')||''}catch(e){}
+var KEY='';try{KEY=localStorage.getItem('plexmediahub.tmdb')||''}catch(e){}
 KEY=KEY||'PASTE_YOUR_TMDB_KEY_HERE';
 function api(p){var h={},u='https://api.themoviedb.org/3'+p;if(KEY.length>40)h.Authorization='Bearer '+KEY;else u+=(p.indexOf('?')>-1?'&':'?')+'api_key='+KEY;return fetch(u,{headers:h}).then(function(r){return r.json()})}
 var GN={28:'Action',12:'Adventure',16:'Animation',35:'Comedy',80:'Crime',99:'Documentary',18:'Drama',10751:'Family',14:'Fantasy',36:'History',27:'Horror',10402:'Music',9648:'Mystery',10749:'Romance',878:'Science Fiction',53:'Thriller',10752:'War',37:'Western',10765:'Sci-Fi & Fantasy',10759:'Action & Adventure'};
@@ -233,9 +233,9 @@ v.addEventListener('click',function(e){var h=e.target.closest('.hd');if(h)openSe
 v.addEventListener('keydown',function(e){var h=e.target.closest('.hd');if(h&&e.key==='Enter')openSection(h.dataset.t)});
 var sb=document.querySelector('.search');sb.addEventListener('click',openSearch);sb.addEventListener('keydown',function(e){if(e.key==='Enter')openSearch()});
 
-try{ADD=JSON.parse(localStorage.getItem('streamly.addons')||'null')}catch(e){}
+try{ADD=JSON.parse(localStorage.getItem('plexmediahub.addons')||'null')}catch(e){}
 if(!Array.isArray(ADD))ADD=[{url:'https://v3-cinemeta.strem.io/manifest.json',manifest:{id:'com.linvo.cinemeta',name:'Cinemeta',version:'3',description:'Movie and series catalogs',catalogs:[{type:'movie',id:'top',name:'Popular',extra:[{name:'search'},{name:'skip'}]},{type:'series',id:'top',name:'Popular',extra:[{name:'search'},{name:'skip'}]}]}}];
-function store(){try{localStorage.setItem('streamly.addons',JSON.stringify(ADD))}catch(e){}}
+function store(){try{localStorage.setItem('plexmediahub.addons',JSON.stringify(ADD))}catch(e){}}
 function fetchJ(u){return fetch(u).then(function(r){if(!r.ok)throw 0;return r.json()})}
 function abase(a){return a.url.replace(/\/manifest\.json.*$/,'')}
 function acat(a,c,e){return abase(a)+'/catalog/'+encodeURIComponent(c.type)+'/'+encodeURIComponent(c.id)+(e?'/'+e:'')+'.json'}
@@ -261,7 +261,7 @@ function loadAddonRows(){
 }
 function addonList(){return ADD.length?ADD.map(function(a,i){var m=a.manifest,n=(m.catalogs||[]).length;return '<div class="ai"><div><b>'+esc(String(m.name))+' <small>v'+esc(String(m.version||''))+'</small></b><small>'+esc(String(m.description||'').slice(0,90))+'</small><small>'+(n?n+' catalog'+(n>1?'s':''):'No catalogs to show')+'</small></div><button class="rm" data-i="'+i+'">Remove</button></div>'}).join(''):'<p class="note2">No add-ons installed.</p>'}
 function addonsPage(){return '<div class="addons"><h2 class="pg">Settings</h2><h3 class="sh">Plex</h3><div id="pbox">'+plexBox()+'</div><div id="pmsg" class="note2" role="status"></div></div>'}
-function msg(t){var m=document.getElementById('mmsg');if(m)m.textContent=t}
+function msg(t){var m=document.getElementById('pmsg');if(m)m.textContent=t}
 function install(){
   var i=document.getElementById('murl'),u=i.value.trim().replace(/^stremio:\/\//,'https://');
   if(!/^https?:\/\/.+/.test(u)){msg('Enter a link that starts with https://');return}
@@ -277,18 +277,18 @@ function install(){
 }
 v.addEventListener('click',function(e){
   if(e.target.closest('#minst'))install();
-  if(e.target.closest('#ksave')){var k=document.getElementById('tkey').value.trim();try{k?localStorage.setItem('streamly.tmdb',k):localStorage.removeItem('streamly.tmdb')}catch(x){}location.reload()}
+  if(e.target.closest('#ksave')){var k=document.getElementById('tkey').value.trim();try{k?localStorage.setItem('plexmediahub.tmdb',k):localStorage.removeItem('plexmediahub.tmdb')}catch(x){}location.reload()}
   var r=e.target.closest('.rm');
   if(r){ADD.splice(+r.dataset.i,1);store();document.getElementById('mlist').innerHTML=addonList();msg('Removed.');loadAddonRows()}
 });
 if('serviceWorker' in navigator&&!window.Capacitor&&/^https?:/.test(location.protocol)){navigator.serviceWorker.register('sw.js').catch(function(){})}
 
-try{PL=JSON.parse(localStorage.getItem('streamly.plex')||'null')}catch(e){}
-try{LIST=JSON.parse(localStorage.getItem('streamly.list')||'[]')}catch(e){}
+try{PL=JSON.parse(localStorage.getItem('plexmediahub.plex')||'null')}catch(e){}
+try{LIST=JSON.parse(localStorage.getItem('plexmediahub.list')||'[]')}catch(e){}
 function kk(a){return a[5]?' data-k="'+esc(String(a[5]))+'"':''}
 function toast(t){var d=document.createElement('div');d.className='toast';d.textContent=t;document.body.appendChild(d);setTimeout(function(){d.remove()},2600)}
-function cid(){var c='';try{c=localStorage.getItem('streamly.cid')||''}catch(e){}if(!c){c='streamly-'+Math.random().toString(36).slice(2)+Date.now().toString(36);try{localStorage.setItem('streamly.cid',c)}catch(e){}}return c}
-function HX(){return {'Accept':'application/json','X-Plex-Client-Identifier':cid(),'X-Plex-Product':'Streamly','X-Plex-Version':'1.0','X-Plex-Platform':'Android','X-Plex-Device':'Phone','X-Plex-Device-Name':'Streamly'}}
+function cid(){var c='';try{c=localStorage.getItem('plexmediahub.cid')||''}catch(e){}if(!c){c='plexmediahub-'+Math.random().toString(36).slice(2)+Date.now().toString(36);try{localStorage.setItem('plexmediahub.cid',c)}catch(e){}}return c}
+function HX(){return {'Accept':'application/json','X-Plex-Client-Identifier':cid(),'X-Plex-Product':'PlexMediaHub','X-Plex-Version':'1.0','X-Plex-Platform':'Android','X-Plex-Device':'Phone','X-Plex-Device-Name':'PlexMediaHub'}}
 function tvj(u,o){return fetch(u,o||{headers:HX()}).then(function(r){if(!r.ok)throw r.status;return r.json()})}
 function race(p,ms){return Promise.race([p,new Promise(function(_,j){setTimeout(function(){j('t')},ms)})])}
 function pget(p,q){return tvj(PL.server.uri+p+(p.indexOf('?')>-1?'&':'?')+(q?q+'&':'')+'X-Plex-Token='+encodeURIComponent(PL.server.token),{headers:HX()})}
@@ -300,7 +300,7 @@ function pitem(m,wide){
   return [String(t),'g1',pr,img,(m.Genre||[]).slice(0,3).map(function(g){return g.tag}).join(' \u2022 '),'plex:'+m.ratingKey];
 }
 function prows(type){return PROWS.filter(function(r){return !type||r.c.type===type}).map(function(r){return sec(r.t,r.items)}).join('')}
-function plexBox(){return PL?'<p class="note2">Connected to '+esc(String(PL.server.name))+'.</p><div class="addrow"><button id="pout">Sign out</button></div>':'<p class="note2">Sign in to play your Plex library inside Streamly.</p><div class="addrow"><button id="pin">Sign in with Plex</button></div>'}
+function plexBox(){return PL?'<p class="note2">Connected to '+esc(String(PL.server.name))+'.</p><div class="addrow"><button id="pout">Sign out</button></div>':'<p class="note2">Sign in to play your Plex library inside Plex Media Hub.</p><div class="addrow"><button id="pin">Sign in with Plex</button></div>'}
 function pmsg(h){var m=document.getElementById('pmsg');if(m)m.innerHTML=h}
 function plexSignIn(){
   pmsg('Contacting Plex...');
@@ -326,7 +326,7 @@ function plexPick(tok){
     var cs=(d.connections||[]).slice().sort(function(a,b){return sc(a)-sc(b)});
     return tryConn(d,cs,0).then(function(uri){
       PL={token:tok,server:{name:d.name,uri:uri.replace(/\/$/,''),token:d.accessToken}};
-      try{localStorage.setItem('streamly.plex',JSON.stringify(PL))}catch(e){}
+      try{localStorage.setItem('plexmediahub.plex',JSON.stringify(PL))}catch(e){}
       var b=document.getElementById('pbox');if(b)b.innerHTML=plexBox();
       pmsg('Connected to '+esc(String(d.name))+'. Loading your libraries...');loadPlex();
     });
@@ -367,7 +367,7 @@ function loadPlex(){
 function plexSearch(q){if(!PL)return Promise.resolve([]);return pget('/hubs/search','query='+encodeURIComponent(q)+'&limit=12').then(function(r){var o=[];(r.MediaContainer.Hub||[]).forEach(function(h){if(h.type==='movie'||h.type==='show')(h.Metadata||[]).forEach(function(m){o.push(pitem(m))})});return o}).catch(function(){return []})}
 function lkey(a){return a[0]+'|'+(a[5]||'')}
 function inList(a){return LIST.some(function(x){return lkey(x)===lkey(a)})}
-function toggle(a){var k=lkey(a),i=-1;LIST.forEach(function(x,j){if(lkey(x)===k)i=j});if(i>=0){LIST.splice(i,1);toast('Removed from My List')}else{LIST.push(a);toast('Added to My List')}try{localStorage.setItem('streamly.list',JSON.stringify(LIST))}catch(e){}}
+function toggle(a){var k=lkey(a),i=-1;LIST.forEach(function(x,j){if(lkey(x)===k)i=j});if(i>=0){LIST.splice(i,1);toast('Removed from My List')}else{LIST.push(a);toast('Added to My List')}try{localStorage.setItem('plexmediahub.list',JSON.stringify(LIST))}catch(e){}}
 function listPage(){return LIST.length?'<h2 class="pg" style="padding:24px 20px 14px">My List</h2><div class="grid">'+LIST.map(tall).join('')+'</div>':'<div class="empty">My List is empty for now. Titles you add will show up here.</div>'}
 function openTitle(id){
   openSub('<div class="subhd">'+BACK+'</div><p class="note">Loading...</p>');
@@ -397,7 +397,7 @@ var PT=null;
 function playItem(id){
   pget('/library/metadata/'+id).then(function(r){
     var m=r.MediaContainer.Metadata[0],part=m.Media&&m.Media[0]&&m.Media[0].Part&&m.Media[0].Part[0],off=m.viewOffset||0,tk=encodeURIComponent(PL.server.token);
-    var hls=PL.server.uri+'/video/:/transcode/universal/start.m3u8?hasMDE=1&path='+encodeURIComponent('/library/metadata/'+id)+'&mediaIndex=0&partIndex=0&protocol=hls&fastSeek=1&directPlay=0&directStream=1&subtitleSize=100&audioBoost=100&location=wan&maxVideoBitrate=8000&offset='+Math.floor(off/1000)+'&session='+encodeURIComponent(cid()+Date.now())+'&X-Plex-Platform=Android&X-Plex-Product=Streamly&X-Plex-Client-Identifier='+encodeURIComponent(cid())+'&X-Plex-Token='+tk;
+    var hls=PL.server.uri+'/video/:/transcode/universal/start.m3u8?hasMDE=1&path='+encodeURIComponent('/library/metadata/'+id)+'&mediaIndex=0&partIndex=0&protocol=hls&fastSeek=1&directPlay=0&directStream=1&subtitleSize=100&audioBoost=100&location=wan&maxVideoBitrate=8000&offset='+Math.floor(off/1000)+'&session='+encodeURIComponent(cid()+Date.now())+'&X-Plex-Platform=Android&X-Plex-Product=PlexMediaHub&X-Plex-Client-Identifier='+encodeURIComponent(cid())+'&X-Plex-Token='+tk;
     showPlayer(m,hls,part?PL.server.uri+part.key+'?X-Plex-Token='+tk:'',off);
   }).catch(function(){toast('Could not start playback')});
 }
@@ -438,12 +438,12 @@ function hit(e){
   if(t.closest('#surp')){if(POOL.length)openTitle(POOL[Math.floor(Math.random()*POOL.length)][5].slice(5));return}
   if(t.closest('#gosettings')){document.querySelector('.nav button[data-l="More"]').click();return}
   if(t.closest('#pin')){plexSignIn();return}
-  if(t.closest('#pout')){try{localStorage.removeItem('streamly.plex')}catch(x){}location.reload()}
+  if(t.closest('#pout')){try{localStorage.removeItem('plexmediahub.plex')}catch(x){}location.reload()}
 }
 v.addEventListener('click',hit);sub.addEventListener('click',hit);
 loadPlex();
 
-function showX(){try{return localStorage.getItem('streamly.extra')==='1'}catch(e){return false}}
+function showX(){try{return localStorage.getItem('plexmediahub.extra')==='1'}catch(e){return false}}
 function plexOnly(){return true}
 function HEROES(){return PL&&HERO.length?HERO:(plexOnly()?[]:movies.slice(0,3))}
 function plexHome(t){
@@ -453,12 +453,12 @@ function plexHome(t){
   if(!t&&PXON)r=hd('Continue Watching')+'<div class="row">'+cont.map(wide).join('')+'</div>'+r;
   return r||'<p class="note">No Plex libraries found. Check More, Settings.</p>';
 }
-v.addEventListener('change',function(e){if(e.target.id==='xrows'){try{localStorage.setItem('streamly.extra',e.target.checked?'1':'0')}catch(x){}}});
+v.addEventListener('change',function(e){if(e.target.id==='xrows'){try{localStorage.setItem('plexmediahub.extra',e.target.checked?'1':'0')}catch(x){}}});
 
 function shuffle(a){a=a.slice();for(var i=a.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1)),x=a[i];a[i]=a[j];a[j]=x}return a}
 function heroItem(m){return [String(m.title),'g1',0,pimg(m.thumb,600,900),(m.Genre||[]).slice(0,3).map(function(g){return g.tag}).join(' \u2022 '),'plex:'+m.ratingKey,m.type]}
 function mkTop(t,type,arr){return {t:t,items:arr.map(function(m){return pitem(m)}),c:{type:type}}}
-function welcome(){return '<div class="empty">Welcome to Streamly<p class="note2">Sign in to your Plex account to see your library here.</p><button class="more" id="gosettings">Open Settings</button></div>'}
+function welcome(){return '<div class="empty">Welcome to Plex Media Hub<p class="note2">Sign in to your Plex account to see your library here.</p><button class="more" id="gosettings">Open Settings</button></div>'}
 function discoverPage(){
   if(!PL)return welcome();
   if(!POOL.length)return '<div class="empty">Nothing to discover yet.</div>';
