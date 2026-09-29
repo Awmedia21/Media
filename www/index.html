@@ -23,9 +23,9 @@ body{margin:0;background:var(--bg);color:var(--fg);font-family:"Roboto","Helveti
 .row{display:flex;gap:12px;overflow-x:auto;padding:0 20px 6px;scrollbar-width:none}
 .row::-webkit-scrollbar{display:none}
 .wide{flex:0 0 78%;max-width:340px}
-.wide .art{aspect-ratio:16/10;border-radius:18px}
+.wide .art{aspect-ratio:2/3;border-radius:18px;background-size:cover;background-position:center}
 .tall{flex:0 0 42%;max-width:190px}
-.tall .art{aspect-ratio:2/3;border-radius:14px}
+.tall .art{aspect-ratio:2/3;border-radius:14px;background-size:cover;background-position:center}
 .art{position:relative;overflow:hidden;display:flex;align-items:flex-end;padding:12px;cursor:pointer;transition:transform .15s}
 .art:active{transform:scale(.97)}
 .art b{font-size:22px;line-height:1;letter-spacing:.5px;text-shadow:0 2px 8px rgba(0,0,0,.6);font-family:Impact,"Arial Narrow",sans-serif;font-weight:400}
@@ -75,7 +75,7 @@ body{margin:0;background:var(--bg);color:var(--fg);font-family:"Roboto","Helveti
 .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(104px,1fr));gap:16px 12px;padding:0 16px}
 .grid .tall{max-width:none}
 .grid .tall .cap{font-size:14px;margin-top:8px}
-.grid.w{grid-template-columns:1fr}
+.grid.w{grid-template-columns:repeat(auto-fill,minmax(104px,1fr))}
 .grid .wide{max-width:none}
 .more{display:block;margin:24px auto 0;padding:12px 30px;border-radius:24px;border:0;background:#2a2a30;color:#fff;font-weight:600;font-size:16px;font-family:inherit;cursor:pointer}
 .note{padding:30px 20px;text-align:center;color:var(--muted);font-size:16px;margin:0}
@@ -199,7 +199,7 @@ function openSection(t){
   var ar=ARMAP[t],items=(ar?ar.items:LST(t)).slice(),page=1,ep=EP[t],wm=t==='Continue Watching',canMore=(ep&&hasKey())||(ar&&(ar.more||ex(ar.c).indexOf('skip')>=0));
   function draw(){
     var y=sub.scrollTop;
-    openSub('<div class="subhd">'+BACK+'<h2>'+esc(t)+'</h2></div><div class="grid'+(wm?' w':'')+'">'+items.map(wm?wide:tall).join('')+'</div>'+(canMore?'<button class="more">Load more</button>':'')+(!hasKey()&&!ar?'<p class="note">Add your TMDB key to load the full list.</p>':''));
+    openSub('<div class="subhd">'+BACK+'<h2>'+esc(t)+'</h2></div><div class="grid'+(wm?' w':'')+'">'+items.map(tall).join('')+'</div>'+(canMore?'<button class="more">Load more</button>':'')+(!hasKey()&&!ar?'<p class="note">Add your TMDB key to load the full list.</p>':''));
     sub.scrollTop=y;
   }
   moreFn=function(){
