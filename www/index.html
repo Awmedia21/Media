@@ -135,7 +135,6 @@
 
         // Mock helper functions (Replace or map to your existing environment functions)
         function pget(endpoint, params) {
-            // Replace with your actual Plex API fetch logic
             return fetch(endpoint + (params ? '?' + params : '')).then(res => res.json());
         }
 
@@ -258,9 +257,39 @@
             }).catch(function(){ PXST = 2; pmsg('Could not load your Plex libraries.'); rerender(); });
         }
 
+        // --- Automatic Update Checker Logic ---
+        var CURRENT_VERSION_CODE = 1; // Change this number only when releasing a new APK build
+
+        function checkForAppUpdates() {
+            var versionFileUrl = 'https://raw.githubusercontent.com/Awmedia21/Media/main/version.json';
+
+            fetch(versionFileUrl + '?t=' + new Date().getTime())
+                .then(response => response.json())
+                .then(data => {
+                    if (data.versionCode > CURRENT_VERSION_CODE) {
+                        showUpdateModal(data.versionName, data.apkUrl);
+                    }
+                })
+                .catch(err => console.log('Update check failed', err));
+        }
+
+        function showUpdateModal(versionName, apkUrl) {
+            var modal = document.createElement('div');
+            modal.style.cssText = 'position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.85); z-index:9999; display:flex; justify-content:center; align-items:center;';
+            modal.innerHTML = `
+                <div style="background:#1f1f1f; padding:30px; border-radius:12px; max-width:400px; text-align:center; color:#fff; font-family:sans-serif;">
+                    <h3 style="margin-top:0; color:#e5a00d;">Update Available (v${versionName})</h3>
+                    <p style="color:#ccc; font-size:14px;">A new version of the app is available.</p>
+                    <a href="${apkUrl}" style="display:inline-block; background:#e5a00d; color:#000; padding:12px 24px; border-radius:6px; text-decoration:none; font-weight:bold; margin-top:15px;">Download Update</a>
+                </div>
+            `;
+            document.body.appendChild(modal);
+        }
+
         // Initialize on load
         window.onload = function() {
             loadPlex();
+            setTimeout(checkForAppUpdates, 3000); // Check for updates 3 seconds after opening
         };
     </script>
 </body>
