@@ -17,11 +17,23 @@ jobs:
           java-version: 21
       - run: npm install
       - run: npx cap add android
-      - run: npx capacitor-assets generate --android --iconBackgroundColor '#b3122a' --iconBackgroundColorDark '#b3122a' || true
+      - name: Icons and Fire TV support
+        run: |
+          mkdir -p assets android/app/src/main/res/drawable
+          cp pmh-icon.png assets/icon-only.png
+          cp pmh-banner.png android/app/src/main/res/drawable/banner.png
+          npx capacitor-assets generate --android --iconBackgroundColor '#b3122a' --iconBackgroundColorDark '#b3122a' || true
+          python3 - <<'PYEOF'
+          p='android/app/src/main/AndroidManifest.xml'
+          s=open(p).read()
+          s=s.replace('<application','<uses-feature android:name="android.software.leanback" android:required="false" />\n    <uses-feature android:name="android.hardware.touchscreen" android:required="false" />\n    <application android:banner="@drawable/banner"',1)
+          s=s.replace('<category android:name="android.intent.category.LAUNCHER" />','<category android:name="android.intent.category.LAUNCHER" />\n                <category android:name="android.intent.category.LEANBACK_LAUNCHER" />',1)
+          open(p,'w').write(s)
+          PYEOF
       - run: npx cap sync android
       - run: ./gradlew assembleDebug
         working-directory: android
       - uses: actions/upload-artifact@v4
         with:
-          name: streamly-apk
+          name: plex-media-hub-apk
           path: android/app/build/outputs/apk/debug/app-debug.apk
