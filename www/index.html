@@ -185,30 +185,7 @@ function load(){
   if(!KEY||KEY.indexOf('PASTE')===0)return;
   var I='https://image.tmdb.org/t/p/';
   function mp(r,f,g){return r.results.filter(function(x){return x.poster_path}).slice(0,12).map(function(x){return [x.title||x.name,g,0,I+'w500'+x.poster_path,(x.genre_ids||[]).slice(0,3).map(function(i){return GN[i]}).filter(Boolean).join(' \u2022 ')]})}
-  
-  // Fetching top-rated 2026 movies specifically for the hero banner & standard catalogs
-  Promise.all([
-    api('/discover/movie?primary_release_year=2026&sort_by=vote_average.desc&vote_count.gte=5'),
-    api('/tv/popular'),
-    api('/trending/tv/week'),
-    api('/tv/top_rated'),
-    api('/discover/movie?with_genres=10751')
-  ]).then(function(r){
-    var top26 = r[0].results || [];
-    if(top26.length) {
-      HERO = top26.filter(function(x){return x.poster_path;}).slice(0, 5).map(function(x){
-        return [
-          x.title,
-          'g1',
-          0,
-          I+'w500'+x.poster_path,
-          (x.genre_ids||[]).slice(0,3).map(function(i){return GN[i]}).filter(Boolean).join(' \u2022 '),
-          'tmdb:'+x.id,
-          'movie',
-          x.backdrop_path ? I+'w1280'+x.backdrop_path : ''
-        ];
-      });
-    }
+  Promise.all([api('/movie/now_playing'),api('/tv/popular'),api('/trending/tv/week'),api('/tv/top_rated'),api('/discover/movie?with_genres=10751')]).then(function(r){
     movies=mp(r[0],0,'g1');shows=mp(r[1],0,'g5');most=mp(r[2],0,'g3');topRated=mp(r[3],0,'g7');kids=mp(r[4],0,'g8');
     if(!PXON)cont=r[0].results.filter(function(x){return x.backdrop_path}).slice(0,2).map(function(x,i){return [x.title,'g1',[62,30][i],I+'w780'+x.backdrop_path]});
     rerender();
@@ -474,16 +451,7 @@ function hit(e){
   var p=t.closest('[data-play]');if(p){playItem(p.dataset.play);return}
   var l=t.closest('[data-list]');if(l&&TP){toggle(TP);l.textContent=inList(TP)?'\u2713 In My List':'+ My List';return}
   var s=t.closest('.sbtn');if(s){document.querySelectorAll('.sbtn').forEach(function(x){x.classList.remove('on')});s.classList.add('on');loadEps(s.dataset.s);return}
-  var hp=t.closest('.hcard .play');
-  if(hp){
-    var hc=hp.closest('.hcard');
-    if(hc.dataset.pk && hc.dataset.pk.startsWith('tmdb:')) {
-      // Handle TMDB-driven hero item clicks if clicking play
-      toast('TMDB playback requires mapping or Plex sync');
-      return;
-    }
-    if(hc.dataset.pk&&PL){if(hc.dataset.pt==='movie')playItem(hc.dataset.pk.slice(5));else openTitle(hc.dataset.pk.slice(5))}else heroPlay(hc.dataset.t);return;
-  }
+  var hp=t.closest('.hcard .play');if(hp){var hc=hp.closest('.hcard');if(hc.dataset.pk&&PL){if(hc.dataset.pt==='movie')playItem(hc.dataset.pk.slice(5));else openTitle(hc.dataset.pk.slice(5))}else heroPlay(hc.dataset.t);return}
   var ha=t.closest('.hcard .add');if(ha){var n=ha.closest('.hcard').dataset.t,it=HEROES().filter(function(x){return x[0]===n})[0];if(it)toggle(it.slice(0,6));return}
   if(t.closest('#shuf')){v.innerHTML=discoverPage();return}
   if(t.closest('#surp')){if(POOL.length)openTitle(POOL[Math.floor(Math.random()*POOL.length)][5].slice(5));return}
@@ -496,7 +464,7 @@ loadPlex();
 
 function showX(){try{return localStorage.getItem('plexmediahub.extra')==='1'}catch(e){return false}}
 function plexOnly(){return true}
-function HEROES(){return HERO.length?HERO:(plexOnly()?[]:movies.slice(0,3))}
+function HEROES(){return PL&&HERO.length?HERO:(plexOnly()?[]:movies.slice(0,3))}
 function plexHome(t){
   if(!PL)return welcome();
   if(PXST===0)return '<p class="note">Loading your Plex library...</p>';
