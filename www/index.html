@@ -6,8 +6,8 @@
 <title>Plex Media Hub</title>
 <meta name="theme-color" content="#050505">
 <link rel="manifest" href="manifest.webmanifest">
-<link rel="icon" href="data:image/svg+xml,<svg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 100 100%27><rect width=%27100%27 height=%27100%27 rx=%2725%27 fill=%27%23e5383b%27/><text x=%2750%%27 y=%2758%%27 font-size=%2750%27 font-weight=%27bold%27 fill=%27%23fff%27 text-anchor=%27middle%27 dominant-baseline=%27middle%27 font-family=%27sans-serif%27>P</text></svg>">
-<link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 100 100%27><rect width=%27100%27 height=%27100%27 rx=%2725%27 fill=%27%23e5383b%27/><text x=%2750%%27 y=%2758%%27 font-size=%2750%27 font-weight=%27bold%27 fill=%27%23fff%27 text-anchor=%27middle%27 dominant-baseline=%27middle%27 font-family=%27sans-serif%27>P</text></svg>">
+<link rel="icon" href="icons/icon-192.png">
+<link rel="apple-touch-icon" href="icons/icon-192.png">
 <style>
 :root{--bg:#050505;--fg:#fff;--muted:#9a9aa2;--pill:rgba(60,60,64,.92);--bar:rgba(34,34,38,.94);box-sizing:border-box;padding-top:env(safe-area-inset-top,0px)}
 *{box-sizing:border-box}
@@ -22,17 +22,15 @@ body{margin:0;background:var(--bg);color:var(--fg);font-family:"Roboto","Helveti
 .hd svg{width:26px;height:26px;stroke:#fff;fill:none;stroke-width:2.5;stroke-linecap:round;stroke-linejoin:round}
 .row{display:flex;gap:12px;overflow-x:auto;padding:0 20px 6px;scrollbar-width:none}
 .row::-webkit-scrollbar{display:none}
-.wide{flex:0 0 42%;max-width:190px}
-.wide .art{aspect-ratio:2/3;border-radius:14px;background-size:cover;background-position:center}
-.tall{flex:0 0 42%;max-width:190px}
-.tall .art{aspect-ratio:2/3;border-radius:14px;background-size:cover;background-position:center}
+.wide,.tall{flex:0 0 42%;width:42%;min-width:0;max-width:190px}
+.wide .art,.tall .art{aspect-ratio:2/3;border-radius:14px}
 .art{position:relative;overflow:hidden;display:flex;align-items:flex-end;padding:12px;cursor:pointer;transition:transform .15s}
 .art:active{transform:scale(.97)}
 .art b{font-size:22px;line-height:1;letter-spacing:.5px;text-shadow:0 2px 8px rgba(0,0,0,.6);font-family:Impact,"Arial Narrow",sans-serif;font-weight:400}
-.wide .art b{font-size:22px}
+.wide .art b{font-size:26px}
 .bar{position:absolute;left:0;right:0;bottom:0;height:5px;background:rgba(255,255,255,.25)}
 .bar i{display:block;height:100%;background:#e5383b}
-.cap{margin:10px 4px 0;font-size:18px;font-weight:400;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.cap{margin:10px 4px 0;font-size:16px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .tall .cap{font-weight:400;font-size:18px}
 .g1{background:radial-gradient(circle at 70% 25%,#f4a259 0,transparent 35%),linear-gradient(160deg,#1d3557,#6a1b2b)}
 .g2{background:linear-gradient(180deg,#f3d9a4,#e07a5f 55%,#3d405b)}
@@ -73,7 +71,7 @@ body{margin:0;background:var(--bg);color:var(--fg);font-family:"Roboto","Helveti
 .back svg{width:30px;height:30px;stroke:#fff;fill:none;stroke-width:2.5;stroke-linecap:round;stroke-linejoin:round}
 .subhd input{flex:1;min-width:0;background:#1c1c20;border:0;color:#fff;border-radius:12px;padding:13px 14px;font-size:17px;font-family:inherit}
 .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(104px,1fr));gap:16px 12px;padding:0 16px}
-.grid .tall{max-width:none}
+.grid .tall,.grid .wide{width:auto;max-width:none}
 .grid .tall .cap{font-size:14px;margin-top:8px}
 .grid.w{grid-template-columns:repeat(auto-fill,minmax(104px,1fr))}
 .grid .wide{max-width:none}
@@ -111,13 +109,34 @@ body{margin:0;background:var(--bg);color:var(--fg);font-family:"Roboto","Helveti
 .toast{position:fixed;left:50%;transform:translateX(-50%);bottom:130px;background:#2a2a30;color:#fff;padding:12px 18px;border-radius:22px;z-index:40;font-size:15px}
 .chk{display:block;margin-top:14px;font-size:15px;color:#ddd}
 .chk input{margin-right:8px;width:18px;height:18px;vertical-align:-3px}
+.art:focus-visible,.ep:focus-visible,.hd:focus-visible{outline:4px solid #fff;outline-offset:3px}
+.art:focus-visible{transform:scale(1.04)}
+@media (min-width:900px){
+.app{max-width:none}
+.top{padding:28px 48px 0}.logo{height:52px}.top .search{width:44px;height:44px}
+.tabs{padding:20px 48px 0}
+.hd{padding:30px 48px 14px}
+.row{padding:0 48px 6px;gap:18px}
+.wide,.tall{flex:0 0 180px;width:180px;max-width:none}
+.hcard{flex:0 0 min(78%,820px);max-width:none;aspect-ratio:16/9}
+.hov{padding:60px 28px 22px;text-align:left}
+.ht{font-size:44px}.btns{max-width:420px}.gn{margin:6px 0 14px}
+.subin{max-width:1200px}
+.grid{grid-template-columns:repeat(auto-fill,minmax(170px,1fr));padding:0 48px;gap:22px 18px}
+.grid .tall .cap{font-size:16px}
+.nav{max-width:560px}
+.addons{max-width:900px;margin:0 auto;padding:30px 48px}
+.tpart{height:340px}.tpin{padding:0 48px}
+.seas,.ep{padding-left:48px;padding-right:48px}
+#player video{height:100%}
+}
 .empty{padding:80px 30px;text-align:center;color:var(--muted);font-size:17px}
 :focus-visible{outline:2px solid #fff;outline-offset:3px}
 </style>
 </head>
 <body>
 <div class="app">
-  <div class="top"><svg class="logo" viewBox="0 0 210 40" role="img" aria-label="Plex Media Hub"><defs><linearGradient id="lg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ff5a4d"/><stop offset="1" stop-color="#b3122a"/></linearGradient></defs><rect width="40" height="40" rx="11" fill="url(#lg)"/><path d="M15 9.5v15l13-7.5z" fill="#fff" stroke="#fff" stroke-width="3" stroke-linejoin="round"/><path d="M8 32.5q4-4.5 8 0t8 0t8 0" fill="none" stroke="#fff" stroke-width="2.4" stroke-linecap="round" opacity=".9"/><text x="50" y="27" fill="#fff" font-family="'Trebuchet MS','Segoe UI',Arial,sans-serif" font-size="20" font-weight="800" letter-spacing="-.5">Plex Media Hub</text></svg><svg class="search" role="button" tabindex="0" viewBox="0 0 24 24" aria-label="Search"><circle cx="10.5" cy="10.5" r="7"/><path d="M16 16l5 5"/></svg></div>
+  <div class="top"><svg class="logo" viewBox="0 0 218 40" role="img" aria-label="Plex Media Hub"><defs><linearGradient id="lg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ff5a4d"/><stop offset="1" stop-color="#b3122a"/></linearGradient></defs><rect width="40" height="40" rx="11" fill="url(#lg)"/><text x="20" y="26.5" fill="#fff" text-anchor="middle" font-family="'Arial Black','Trebuchet MS',Arial,sans-serif" font-size="14.5" font-weight="900" letter-spacing="-.5">PMH</text><path d="M9 33q2.75-3 5.5 0t5.5 0t5.5 0t5.5 0" fill="none" stroke="#fff" stroke-width="1.8" stroke-linecap="round" opacity=".85"/><text x="50" y="27" fill="#fff" font-family="'Trebuchet MS','Segoe UI',Arial,sans-serif" font-size="21" font-weight="800" letter-spacing="-.5">Plex Media Hub</text></svg><svg class="search" role="button" tabindex="0" viewBox="0 0 24 24" aria-label="Search"><circle cx="10.5" cy="10.5" r="7"/><path d="M16 16l5 5"/></svg></div>
   <div class="tabs" id="tabs">
     <button class="tab on">Home</button><button class="tab">Movies</button><button class="tab">TV Shows</button>
   </div>
@@ -140,13 +159,13 @@ function hd(t){return '<div class="hd" role="button" tabindex="0" data-t="'+esc(
 function safe(u){return /^https?:\/\//.test(u||'')?u.replace(/['"()\s<>]/g,function(c){return '%'+c.charCodeAt(0).toString(16)}):''}
 function bg(a){return safe(a[3])?' style="background:#111 url('+safe(a[3])+') center/cover"':''}
 function lab(a){return safe(a[3])?'':'<b>'+esc(a[0]).toUpperCase()+'</b>'}
-function wide(a){return '<div class="wide"><div class="art '+a[1]+'"'+kk(a)+bg(a)+'>'+lab(a)+'<div class="bar"><i style="width:'+a[2]+'%"></i></div></div><div class="cap">'+a[0]+'</div></div>'}
-function tall(a){return '<div class="tall"><div class="art '+a[1]+'"'+kk(a)+bg(a)+'>'+lab(a)+'</div><div class="cap">'+a[0]+'</div></div>'}
+function wide(a){return '<div class="wide"><div class="art '+a[1]+'"'+kk(a)+' tabindex="0"'+bg(a)+'>'+lab(a)+'<div class="bar"><i style="width:'+a[2]+'%"></i></div></div><div class="cap">'+a[0]+'</div></div>'}
+function tall(a){return '<div class="tall"><div class="art '+a[1]+'"'+kk(a)+' tabindex="0"'+bg(a)+'>'+lab(a)+'</div><div class="cap">'+a[0]+'</div></div>'}
 var most=[["Iron Throne",'g3'],["Dark Frontier",'g1'],["The Vault Job",'g5'],["Harbor Lights",'g2']];
 var topRated=[["Teach the Class",'g7'],["Cattle Country",'g6'],["Perfect Crown",'g8'],["Long Winter",'g4']];
 var kids=[["Bubble Kingdom",'g8'],["Little Comet",'g7'],["Fox and Fern",'g6'],["Sea Song",'g4']];
 function sec(t,l){return hd(t)+'<div class="row">'+l.map(tall).join('')+'</div>'}
-function hero(){var H=HEROES();if(!H.length)return '';return '<div class="row">'+H.map(function(a){return '<div class="hcard" data-t="'+esc(a[0])+'" data-pk="'+esc(String(a[5]||''))+'" data-pt="'+esc(String(a[6]||''))+'"><div class="art '+a[1]+'"'+kk(a)+bg(a)+'></div><div class="hov">'+(a[3]?'':'<b class="ht">'+a[0]+'</b>')+'<div class="gn">'+(a[4]||'Drama \u2022 Mystery \u2022 Thriller')+'</div><div class="btns"><button class="play">\u25B6 PLAY NOW</button><button class="add">+ My List</button></div></div></div>'}).join('')+'</div>'}
+function hero(){var H=HEROES();if(!H.length)return '';return '<div class="row">'+H.map(function(a){return '<div class="hcard" data-t="'+esc(a[0])+'" data-pk="'+esc(String(a[5]||''))+'" data-pt="'+esc(String(a[6]||''))+'"><div class="art '+a[1]+'"'+kk(a)+bg(isTV()?[0,0,0,a[7]||a[3]]:a)+'></div><div class="hov">'+(a[3]?'':'<b class="ht">'+a[0]+'</b>')+'<div class="gn">'+(a[4]||'Drama \u2022 Mystery \u2022 Thriller')+'</div><div class="btns"><button class="play">\u25B6 PLAY NOW</button><button class="add">+ My List</button></div></div></div>'}).join('')+'</div>'}
 function ad(){return '<div class="ad"><span>Shop more, save massive!</span><em>90% OFF</em><u>Shop now</u><small>Ad</small></div>'}
 function home(){if(plexOnly())return hero()+plexHome();return hero()+hd('Continue Watching')+'<div class="row">'+cont.map(wide).join('')+'</div>'+prows()+sec('Now Playing Movies',movies)+sec('Popular TV Shows',shows)+sec('Most Watched TV Shows',most)+ad()+sec('Top Rated TV Shows Of All Time',topRated)+sec('Films For Kids And Family',kids)+arows()}
 function movs(){if(plexOnly())return plexHome('movie');return prows('movie')+sec('Now Playing Movies',movies)+sec('Films For Kids And Family',kids)+arows('movie')}
@@ -168,7 +187,7 @@ function load(){
   function mp(r,f,g){return r.results.filter(function(x){return x.poster_path}).slice(0,12).map(function(x){return [x.title||x.name,g,0,I+'w500'+x.poster_path,(x.genre_ids||[]).slice(0,3).map(function(i){return GN[i]}).filter(Boolean).join(' \u2022 ')]})}
   Promise.all([api('/movie/now_playing'),api('/tv/popular'),api('/trending/tv/week'),api('/tv/top_rated'),api('/discover/movie?with_genres=10751')]).then(function(r){
     movies=mp(r[0],0,'g1');shows=mp(r[1],0,'g5');most=mp(r[2],0,'g3');topRated=mp(r[3],0,'g7');kids=mp(r[4],0,'g8');
-    if(!PXON)cont=r[0].results.filter(function(x){return x.poster_path}).slice(0,2).map(function(x,i){return [x.title,'g1',[62,30][i],I+'w500'+x.poster_path]});
+    if(!PXON)cont=r[0].results.filter(function(x){return x.backdrop_path}).slice(0,2).map(function(x,i){return [x.title,'g1',[62,30][i],I+'w780'+x.backdrop_path]});
     rerender();
   }).catch(function(){});
 }
@@ -199,7 +218,7 @@ function openSection(t){
   var ar=ARMAP[t],items=(ar?ar.items:LST(t)).slice(),page=1,ep=EP[t],wm=t==='Continue Watching',canMore=(ep&&hasKey())||(ar&&(ar.more||ex(ar.c).indexOf('skip')>=0));
   function draw(){
     var y=sub.scrollTop;
-    openSub('<div class="subhd">'+BACK+'<h2>'+esc(t)+'</h2></div><div class="grid'+(wm?' w':'')+'">'+items.map(tall).join('')+'</div>'+(canMore?'<button class="more">Load more</button>':'')+(!hasKey()&&!ar?'<p class="note">Add your TMDB key to load the full list.</p>':''));
+    openSub('<div class="subhd">'+BACK+'<h2>'+esc(t)+'</h2></div><div class="grid'+(wm?' w':'')+'">'+items.map(wm?wide:tall).join('')+'</div>'+(canMore?'<button class="more">Load more</button>':'')+(!hasKey()&&!ar?'<p class="note">Add your TMDB key to load the full list.</p>':''));
     sub.scrollTop=y;
   }
   moreFn=function(){
@@ -261,7 +280,7 @@ function loadAddonRows(){
 }
 function addonList(){return ADD.length?ADD.map(function(a,i){var m=a.manifest,n=(m.catalogs||[]).length;return '<div class="ai"><div><b>'+esc(String(m.name))+' <small>v'+esc(String(m.version||''))+'</small></b><small>'+esc(String(m.description||'').slice(0,90))+'</small><small>'+(n?n+' catalog'+(n>1?'s':''):'No catalogs to show')+'</small></div><button class="rm" data-i="'+i+'">Remove</button></div>'}).join(''):'<p class="note2">No add-ons installed.</p>'}
 function addonsPage(){return '<div class="addons"><h2 class="pg">Settings</h2><h3 class="sh">Plex</h3><div id="pbox">'+plexBox()+'</div><div id="pmsg" class="note2" role="status"></div></div>'}
-function msg(t){var m=document.getElementById('pmsg');if(m)m.textContent=t}
+function msg(t){var m=document.getElementById('mmsg');if(m)m.textContent=t}
 function install(){
   var i=document.getElementById('murl'),u=i.value.trim().replace(/^stremio:\/\//,'https://');
   if(!/^https?:\/\/.+/.test(u)){msg('Enter a link that starts with https://');return}
@@ -390,7 +409,7 @@ function loadSeasons(id){
 function loadEps(k){
   pget('/library/metadata/'+k+'/children').then(function(r){
     var l=document.getElementById('eplist');if(!l)return;
-    l.innerHTML=(r.MediaContainer.Metadata||[]).map(function(m){return '<div class="ep" data-play="'+esc(String(m.ratingKey))+'"><div class="epn">'+esc(String(m.index||''))+'</div><div class="ept"><b>'+esc(String(m.title))+'</b><small>'+(m.duration?Math.round(m.duration/60000)+' min':'')+'</small></div>\u25B6</div>'}).join('');
+    l.innerHTML=(r.MediaContainer.Metadata||[]).map(function(m){return '<div class="ep" tabindex="0" data-play="'+esc(String(m.ratingKey))+'"><div class="epn">'+esc(String(m.index||''))+'</div><div class="ept"><b>'+esc(String(m.title))+'</b><small>'+(m.duration?Math.round(m.duration/60000)+' min':'')+'</small></div>\u25B6</div>'}).join('');
   }).catch(function(){});
 }
 var PT=null;
@@ -456,7 +475,7 @@ function plexHome(t){
 v.addEventListener('change',function(e){if(e.target.id==='xrows'){try{localStorage.setItem('plexmediahub.extra',e.target.checked?'1':'0')}catch(x){}}});
 
 function shuffle(a){a=a.slice();for(var i=a.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1)),x=a[i];a[i]=a[j];a[j]=x}return a}
-function heroItem(m){return [String(m.title),'g1',0,pimg(m.thumb,600,900),(m.Genre||[]).slice(0,3).map(function(g){return g.tag}).join(' \u2022 '),'plex:'+m.ratingKey,m.type]}
+function heroItem(m){return [String(m.title),'g1',0,pimg(m.thumb,600,900),(m.Genre||[]).slice(0,3).map(function(g){return g.tag}).join(' \u2022 '),'plex:'+m.ratingKey,m.type,pimg(m.art,1280,720)]}
 function mkTop(t,type,arr){return {t:t,items:arr.map(function(m){return pitem(m)}),c:{type:type}}}
 function welcome(){return '<div class="empty">Welcome to Plex Media Hub<p class="note2">Sign in to your Plex account to see your library here.</p><button class="more" id="gosettings">Open Settings</button></div>'}
 function discoverPage(){
@@ -464,6 +483,58 @@ function discoverPage(){
   if(!POOL.length)return '<div class="empty">Nothing to discover yet.</div>';
   return '<h2 class="pg" style="padding:24px 20px 10px">Discover</h2><div class="addrow" style="padding:0 20px 16px"><button id="surp">Surprise me</button><button id="shuf">Shuffle</button></div><div class="grid">'+shuffle(POOL).slice(0,18).map(tall).join('')+'</div>';
 }
+
+function isTV(){return window.innerWidth>=900}
+function focusables(){
+  var els=[];function add(r){Array.prototype.forEach.call(r.querySelectorAll('button,[tabindex="0"],input,[role=button]'),function(e){if(e.disabled)return;var b=e.getBoundingClientRect();if(b.width>0&&b.height>0)els.push(e)})}
+  if(!sub.hidden){add(sub);add(document.getElementById('nav'))}else add(document);
+  return els;
+}
+function move(dir){
+  var list=focusables(),cur=document.activeElement,navEl=document.getElementById('nav');
+  var inNav=function(e){return navEl.contains(e)};
+  if(!cur||list.indexOf(cur)<0){var f=list.filter(function(e){return !inNav(e)&&e.closest('.hcard,.row,.grid')})[0]||list[0];if(f)f.focus();return}
+  var c=cur.getBoundingClientRect(),cx=c.left+c.width/2,cy=c.top+c.height/2,best=null,bs=1e9,fromNav=inNav(cur);
+  var navTop=navEl.getBoundingClientRect().top;
+  list.forEach(function(e){
+    if(e===cur||inNav(e))return;
+    var r=e.getBoundingClientRect(),dx=r.left+r.width/2-cx,dy=r.top+r.height/2-cy,d,p;
+    if(fromNav){if(dir!=='U')return;if(r.bottom>navTop||r.bottom<0)return;d=navTop-r.bottom;p=Math.abs(dx)}
+    else if(dir==='L'&&dx<-2){d=-dx;p=Math.abs(dy)}else if(dir==='R'&&dx>2){d=dx;p=Math.abs(dy)}else if(dir==='U'&&dy<-2){d=-dy;p=Math.abs(dx)}else if(dir==='D'&&dy>2){d=dy;p=Math.abs(dx)}else return;
+    var sc=d+p*3;if(sc<bs){bs=sc;best=e}
+  });
+  if(fromNav&&(dir==='L'||dir==='R')){
+    var nb=Array.prototype.slice.call(navEl.querySelectorAll('button')),i=nb.indexOf(cur)+(dir==='R'?1:-1);
+    if(nb[i])nb[i].focus();return;
+  }
+  if(!best&&!fromNav&&dir==='D'){var nbtn=navEl.querySelector('button.on')||navEl.querySelector('button');if(nbtn)nbtn.focus();return}
+  if(best){best.focus();best.scrollIntoView({block:'center',inline:'center'})}
+}
+document.addEventListener('keydown',function(e){
+  var k=e.key,t=e.target;
+  if(PT){
+    var vv=PT.v;
+    if(k==='Enter'||k===' '||k==='MediaPlayPause'){e.preventDefault();if(vv.paused)vv.play();else vv.pause();return}
+    if(k==='ArrowLeft'||k==='MediaRewind'){e.preventDefault();vv.currentTime=Math.max(0,vv.currentTime-10);return}
+    if(k==='ArrowRight'||k==='MediaFastForward'){e.preventDefault();vv.currentTime=vv.currentTime+10;return}
+    return;
+  }
+  var dir={ArrowLeft:'L',ArrowRight:'R',ArrowUp:'U',ArrowDown:'D'}[k];
+  if(dir){if(t&&t.tagName==='INPUT'&&(dir==='L'||dir==='R'))return;e.preventDefault();move(dir);return}
+  if((k==='Enter'||e.keyCode===23)&&t&&t.matches&&t.matches('.art,.ep')){e.preventDefault();t.click()}
+});
+try{
+  var CAP=window.Capacitor,APP=CAP&&CAP.Plugins&&CAP.Plugins.App;
+  if(APP)APP.addListener('backButton',function(){
+    if(PT){closePlayer();return}
+    if(!sub.hidden){closeSub();return}
+    var n=document.querySelector('.nav button.on');
+    if(n&&n.dataset.l!=='Home'){document.querySelector('.nav button[data-l="Home"]').click();return}
+    var t=document.querySelector('.tab.on');
+    if(t&&t.textContent!=='Home'){document.querySelector('.tab').click();return}
+    APP.exitApp();
+  });
+}catch(e){}
 </script>
 </body>
 </html>
