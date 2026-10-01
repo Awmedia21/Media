@@ -167,8 +167,8 @@ var kids=[["Bubble Kingdom",'g8'],["Little Comet",'g7'],["Fox and Fern",'g6'],["
 function sec(t,l){return hd(t)+'<div class="row">'+l.map(tall).join('')+'</div>'}
 function hero(){var H=HEROES();if(!H.length)return '';return '<div class="row">'+H.map(function(a){return '<div class="hcard" data-t="'+esc(a[0])+'" data-pk="'+esc(String(a[5]||''))+'" data-pt="'+esc(String(a[6]||''))+'"><div class="art '+a[1]+'"'+kk(a)+bg(isTV()?[0,0,0,a[7]||a[3]]:a)+'></div><div class="hov">'+(a[3]?'':'<b class="ht">'+a[0]+'</b>')+'<div class="gn">'+(a[4]||'Drama \u2022 Mystery \u2022 Thriller')+'</div><div class="btns"><button class="play">\u25B6 PLAY NOW</button><button class="add">+ My List</button></div></div></div>'}).join('')+'</div>'}
 function ad(){return '<div class="ad"><span>Shop more, save massive!</span><em>90% OFF</em><u>Shop now</u><small>Ad</small></div>'}
-function home(){if(plexOnly())return hero()+plexHome();return hero()+hd('Continue Watching')+'<div class="row">'+cont.map(wide).join('')+'</div>'+prows()+sec('Now Playing Movies',movies)+sec('Popular TV Shows',shows)+sec('Most Watched TV Shows',most)+ad()+sec('Top Rated TV Shows Of All Time',topRated)+sec('Films For Kids And Family',kids)+arows()}
-function movs(){if(plexOnly())return plexHome('movie');return prows('movie')+sec('Now Playing Movies',movies)+sec('Films For Kids And Family',kids)+arows('movie')}
+function home(){if(plexOnly())return hero()+plexHome();return hero()+hd('Continue Watching')+'<div class="row">'+cont.map(wide).join('')+'</div>'+prows()+sec('2026 Movies',movies)+sec('Popular TV Shows',shows)+sec('Most Watched TV Shows',most)+ad()+sec('Top Rated TV Shows Of All Time',topRated)+sec('2026 Kids & Family Films',kids)+arows()}
+function movs(){if(plexOnly())return plexHome('movie');return prows('movie')+sec('2026 Movies',movies)+sec('2026 Kids & Family Films',kids)+arows('movie')}
 function tv(){if(plexOnly())return plexHome('series');return prows('series')+sec('Popular TV Shows',shows)+sec('Most Watched TV Shows',most)+ad()+sec('Top Rated TV Shows Of All Time',topRated)+arows('series')}
 function none(t){return '<div class="empty">'+t+' is empty for now. Titles you add will show up here.</div>'}
 var views={Home:home,Movies:movs,"TV Shows":tv};
@@ -176,7 +176,6 @@ var v=document.getElementById('view');
 var ADD=null,AROWS=[],ARMAP={},PL=null,PXON=false,PROWS=[],TP=null,LIST=[],HERO=[],PXST=0,POOL=[];
 function show(n){v.innerHTML=views[n]()}
 show('Home');
-// Paste your TMDB v3 API key or v4 read access token here
 var KEY='';try{KEY=localStorage.getItem('plexmediahub.tmdb')||''}catch(e){}
 KEY=KEY||'PASTE_YOUR_TMDB_KEY_HERE';
 function api(p){var h={},u='https://api.themoviedb.org/3'+p;if(KEY.length>40)h.Authorization='Bearer '+KEY;else u+=(p.indexOf('?')>-1?'&':'?')+'api_key='+KEY;return fetch(u,{headers:h}).then(function(r){return r.json()})}
@@ -184,15 +183,15 @@ var GN={28:'Action',12:'Adventure',16:'Animation',35:'Comedy',80:'Crime',99:'Doc
 function load(){
   if(!KEY||KEY.indexOf('PASTE')===0)return;
   var I='https://image.tmdb.org/t/p/';
-  function mp(r,f,g){return r.results.filter(function(x){return x.poster_path}).slice(0,12).map(function(x){return [x.title||x.name,g,0,I+'w500'+x.poster_path,(x.genre_ids||[]).slice(0,3).map(function(i){return GN[i]}).filter(Boolean).join(' \u2022 ')]})}
+  function mp(r,f,g){return (r.results || []).filter(function(x){return x.poster_path}).slice(0,12).map(function(x){return [x.title||x.name,g,0,I+'w500'+x.poster_path,(x.genre_ids||[]).slice(0,3).map(function(i){return GN[i]}).filter(Boolean).join(' \u2022 ')]})}
   
-  // Fetching top-rated 2026 movies specifically for the hero banner & standard catalogs
+  // Fetching 2026 movies strictly for all movie lists and hero banner
   Promise.all([
-    api('/discover/movie?primary_release_year=2026&sort_by=vote_average.desc&vote_count.gte=5'),
+    api('/discover/movie?primary_release_year=2026&sort_by=vote_average.desc&vote_count.gte=1'),
     api('/tv/popular'),
     api('/trending/tv/week'),
     api('/tv/top_rated'),
-    api('/discover/movie?with_genres=10751')
+    api('/discover/movie?primary_release_year=2026&with_genres=10751')
   ]).then(function(r){
     var top26 = r[0].results || [];
     if(top26.length) {
@@ -228,8 +227,8 @@ document.getElementById('nav').addEventListener('click',function(e){
 });
 
 var IMG='https://image.tmdb.org/t/p/';
-var EP={'Now Playing Movies':'/movie/now_playing','Popular TV Shows':'/tv/popular','Most Watched TV Shows':'/trending/tv/week','Top Rated TV Shows Of All Time':'/tv/top_rated','Films For Kids And Family':'/discover/movie?with_genres=10751'};
-function LST(t){return {'Continue Watching':cont,'Now Playing Movies':movies,'Popular TV Shows':shows,'Most Watched TV Shows':most,'Top Rated TV Shows Of All Time':topRated,'Films For Kids And Family':kids}[t]||[]}
+var EP={'2026 Movies':'/discover/movie?primary_release_year=2026&sort_by=popularity.desc','Popular TV Shows':'/tv/popular','Most Watched TV Shows':'/trending/tv/week','Top Rated TV Shows Of All Time':'/tv/top_rated','2026 Kids & Family Films':'/discover/movie?primary_release_year=2026&with_genres=10751'};
+function LST(t){return {'Continue Watching':cont,'2026 Movies':movies,'Popular TV Shows':shows,'Most Watched TV Shows':most,'Top Rated TV Shows Of All Time':topRated,'2026 Kids & Family Films':kids}[t]||[]}
 function hasKey(){return !!KEY&&KEY.indexOf('PASTE')!==0}
 function esc(s){return s.replace(/[&<>"']/g,function(c){return '&#'+c.charCodeAt(0)+';'})}
 function mk(r,g){return (r.results||[]).filter(function(x){return x.poster_path&&x.media_type!=='person'}).map(function(x){return [x.title||x.name,g,0,IMG+'w500'+x.poster_path]})}
@@ -478,7 +477,6 @@ function hit(e){
   if(hp){
     var hc=hp.closest('.hcard');
     if(hc.dataset.pk && hc.dataset.pk.startsWith('tmdb:')) {
-      // Handle TMDB-driven hero item clicks if clicking play
       toast('TMDB playback requires mapping or Plex sync');
       return;
     }
