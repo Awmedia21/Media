@@ -1,7 +1,10 @@
 {
-  "appId": "com.awmedia.plexmediahub",
+  "appId": "com.streamly.app",
   "appName": "Plex Media Hub",
   "webDir": "www",
+  "server": {
+    "androidScheme": "https"
+  },
   "plugins": {
     "CapacitorHttp": {
       "enabled": true
@@ -11,4 +14,3 @@
     "allowMixedContent": true
   }
 }
-
