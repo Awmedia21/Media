@@ -3,6 +3,7 @@
   "appName": "Plex Media Hub",
   "webDir": "www",
   "server": {
+    "url": "https://awmedia21.github.io/Media/www/",
     "androidScheme": "https"
   },
   "plugins": {
