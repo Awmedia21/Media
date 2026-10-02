@@ -204,7 +204,7 @@ var EP={'2026 Movies':'/discover/movie?primary_release_year=2026&sort_by=popular
 function LST(t){return {'Continue Watching':cont,'2026 Movies':movies,'Popular TV Shows':shows,'Most Watched TV Shows':most,'Top Rated TV Shows Of All Time':topRated,'2026 Kids & Family Films':kids}[t]||[]}
 function hasKey(){return !!KEY&&KEY.indexOf('PASTE')!==0}
 function esc(s){return s.replace(/[&<>"']/g,function(c){return '&#'+c.charCodeAt(0)+';'})}
-function mk(r,g){return (r.results||[]).filter(function(x){return x.poster_path&&x.media_type!=='person'}).map(function(x){return [x.title||x.name,g,0,IMG+'w500'+x.poster_path]})}
+function mk(r,g){return (r.results||[]).filter(function(x){return x.poster_path&&x.media_type!=='person'}).map(function(x){return [x.title||x.name,g,0,IMG+'w500'+x.poster_path]}):[]}
 var sub=document.getElementById('sub'),moreFn=null,qTok=0;
 var BACK='<button class="back" aria-label="Back"><svg viewBox="0 0 24 24"><path d="M15 5l-7 7 7 7"/></svg></button>';
 function openSub(h){sub.innerHTML='<div class="subin">'+h+'</div>';sub.hidden=false}
@@ -253,7 +253,7 @@ function store(){try{localStorage.setItem('plexmediahub.addons',JSON.stringify(A
 function fetchJ(u){return fetch(u).then(function(r){if(!r.ok)throw 0;return r.json()})}
 function abase(a){return a.url.replace(/\/manifest\.json.*$/,'')}
 function acat(a,c,e){return abase(a)+'/catalog/'+encodeURIComponent(c.type)+'/'+encodeURIComponent(c.id)+(e?'/'+e:'')+'.json'}
-function ex(c){return (c.extra||[]).map(function(e){return e.name}).concat(c.extraSupported||[])}
+function ex(c){return (c.extra||[]).map(function(e){return e.name}).concat(c.extraRequired||[])}
 function cats(a){return (a.manifest.catalogs||[]).filter(function(c){return c.type&&c.id&&!(c.extra||[]).some(function(e){return e.isRequired})&&!(c.extraRequired||[]).length}).slice(0,4)}
 function searchCats(a){return (a.manifest.catalogs||[]).filter(function(c){return c.type&&c.id&&ex(c).indexOf('search')>=0&&!(c.extra||[]).some(function(e){return e.isRequired&&e.name!=='search'})&&!(c.extraRequired||[]).some(function(n){return n!=='search'})}).slice(0,3)}
 function toItems(r){return ((r&&r.metas)||[]).filter(function(m){return m&&(m.name||m.id)}).map(function(m){return [String(m.name||m.id),'g5',0,m.poster||'']})}
@@ -349,7 +349,7 @@ function plexPick(tok){
 function loadPlex(){
   if(!PL)return;
   pget('/library/sections').then(function(r){
-    var ds=(r.MediaContainer.Directory||[]).filter(function(d){return d.type==='movie'||d.type==='show'});
+    var ds=(r.MediaContainer.Directory||[]).filter(function(d){return d.type==='movie'||d.type===== 'show'});
     var jobs=ds.map(function(d){return pget('/library/sections/'+d.key+'/all','sort=addedAt:desc&X-Plex-Container-Start=0&X-Plex-Container-Size=30').then(function(x){return {d:d,raw:x.MediaContainer.Metadata||[],items:(x.MediaContainer.Metadata||[]).map(function(m){return pitem(m)})}}).catch(function(){return null})});
     ds.forEach(function(d){jobs.push(pget('/library/sections/'+d.key+'/all','X-Plex-Container-Start=0&X-Plex-Container-Size=150').then(function(x){return {pool:x.MediaContainer.Metadata||[]}}).catch(function(){return null}))});
     jobs.push(pget('/library/onDeck').then(function(x){return {od:(x.MediaContainer.Metadata||[]).map(function(m){return pitem(m,true)})}}).catch(function(){return null}));
@@ -365,12 +365,7 @@ function loadPlex(){
       var row={t:t,items:x.items,c:{type:d.type==='movie'?'movie':'series'},more:function(n){return pget('/library/sections/'+d.key+'/all','sort=addedAt:desc&X-Plex-Container-Start='+n+'&X-Plex-Container-Size=30').then(function(y){return (y.MediaContainer.Metadata||[]).map(function(m){return pitem(m)})})}};
       PROWS.push(row);ARMAP[t]=row;
     });
-    var mv=POOLR.filter(function(m){return m.type==='movie'}),sh=POOLR.filter(function(m){return m.type==='show'});
     POOL=POOLR.filter(function(m){return m.thumb&&(m.type==='movie'||m.type==='show')}).map(function(m){return pitem(m)});
-    var tops=[];
-    if(mv.length)tops.push(mkTop('Top Picks: Movies','movie',shuffle(mv).slice(0,15)));
-    if(sh.length)tops.push(mkTop('Top Picks: Shows','series',shuffle(sh).slice(0,15)));
-    PROWS=tops.concat(PROWS);tops.forEach(function(r){ARMAP[r.t]=r});
     PXST=1;pmsg(PROWS.length?'Your Plex libraries are on the Home page.':'Connected, but no movie or show libraries were found.');
     rerender();
   }).catch(function(){PXST=2;pmsg('Could not load your Plex libraries.');rerender()});
@@ -454,7 +449,6 @@ function plexHome(t){
 }
 
 function shuffle(a){a=a.slice();for(var i=a.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1)),x=a[i];a[i]=a[j];a[j]=x}return a}
-function mkTop(t,type,arr){return {t:t,items:arr.map(function(m){return pitem(m)}),c:{type:type}}}
 function welcome(){return '<div class="empty">Welcome to Plex Media Hub<p class="note2">Sign in to your Plex account to see your library here.</p><button class="more" id="gosettings">Open Settings</button></div>'}
 function discoverPage(){
   if(!PL)return welcome();
