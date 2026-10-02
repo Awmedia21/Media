@@ -9,15 +9,16 @@
 <link rel="icon" href="icons/icon-192.png">
 <link rel="apple-touch-icon" href="icons/icon-192.png">
 <style>
-:root{--bg:#121212;--fg:#fff;--muted:#99aabb;--card:#1c1e21;--pill:#282a2d;--accent:#e5a00d;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px)}
+:root{--sat:max(env(safe-area-inset-top,0px),var(--safe-area-inset-top,0px));--bg:#121212;--fg:#fff;--muted:#99aabb;--card:#1c1e21;--pill:#282a2d;--accent:#e5a00d;box-sizing:border-box}
 *{box-sizing:border-box}
-html{scroll-padding-top:env(safe-area-inset-top,0px)}
+html{scroll-padding-top:var(--sat)}
+body::before{content:'';position:fixed;top:0;left:0;right:0;height:var(--sat);background:var(--bg);z-index:20}
 body{margin:0;background:var(--bg);color:var(--fg);font-family:"Open Sans","Roboto","Helvetica Neue",Arial,sans-serif;display:flex;justify-content:center}
-.app{width:100%;max-width:480px;min-height:100vh;padding-bottom:100px;position:relative}
+.app{width:100%;max-width:480px;min-height:100vh;padding:var(--sat) 0 100px;position:relative}
 .top{display:flex;justify-content:space-between;align-items:center;padding:20px 20px 0}
 .logo{height:38px;width:auto}
 .top .search{width:34px;height:34px;stroke:#fff;fill:none;stroke-width:2.2;stroke-linecap:round;cursor:pointer}
-.tabs{display:flex;gap:26px;padding:14px 20px 0;position:sticky;top:0;background:var(--bg);z-index:5;overflow-x:auto;border-bottom:1px solid rgba(255,255,255,.07)}
+.tabs{display:flex;gap:26px;padding:14px 20px 0;position:sticky;top:var(--sat);background:var(--bg);z-index:5;overflow-x:auto;border-bottom:1px solid rgba(255,255,255,.07)}
 .tab{background:none;border:0;color:var(--muted);font-family:inherit;font-weight:600;font-size:17px;padding:8px 0 10px;cursor:pointer;border-bottom:3px solid transparent;white-space:nowrap}
 .tab.on{color:var(--fg);border-color:var(--accent)}
 .hd{display:flex;justify-content:space-between;align-items:center;padding:24px 20px 10px;cursor:pointer}
@@ -39,7 +40,7 @@ body{margin:0;background:var(--bg);color:var(--fg);font-family:"Open Sans","Robo
 .nav button.on{color:var(--accent)}
 .nav svg{width:26px;height:26px;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
 .nav .on svg{fill:currentColor}
-#sub{position:fixed;inset:0;background:var(--bg);z-index:8;overflow-y:auto;padding:calc(env(safe-area-inset-top,0px) + 8px) 0 100px}
+#sub{position:fixed;inset:0;background:var(--bg);z-index:8;overflow-y:auto;padding:calc(var(--sat) + 8px) 0 100px}
 .subin{max-width:480px;margin:0 auto}
 .subhd{display:flex;align-items:center;gap:6px;padding:8px 14px 16px}
 .subhd h2{margin:0;font-size:22px}
@@ -74,7 +75,7 @@ body{margin:0;background:var(--bg);color:var(--fg);font-family:"Open Sans","Robo
 .ept{flex:1;min-width:0}.ept b{display:block;font-size:16px}.ept small{color:var(--muted)}
 #player{position:fixed;inset:0;background:#000;z-index:30;display:flex;align-items:center;justify-content:center}
 #player video{width:100%;max-height:100%}
-.pclose{position:absolute;top:calc(env(safe-area-inset-top,0px) + 10px);left:10px;z-index:2;background:rgba(0,0,0,.55);color:#fff;border:0;border-radius:50%;width:44px;height:44px;font-size:24px;cursor:pointer}
+.pclose{position:absolute;top:calc(var(--sat) + 10px);left:10px;z-index:2;background:rgba(0,0,0,.55);color:#fff;border:0;border-radius:50%;width:44px;height:44px;font-size:24px;cursor:pointer}
 .toast{position:fixed;left:50%;transform:translateX(-50%);bottom:90px;background:var(--pill);color:#fff;padding:12px 18px;border-radius:6px;z-index:40;font-size:15px}
 .empty{padding:80px 30px;text-align:center;color:var(--muted);font-size:17px}
 :focus-visible{outline:2px solid var(--accent);outline-offset:3px}
@@ -226,7 +227,6 @@ function plexPick(tok){
   }).catch(function(){pmsg('Signed in, but no reachable Plex server was found. Check that remote access is enabled on your server.')});
 }
 function shuffle(a){a=a.slice();for(var i=a.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1)),x=a[i];a[i]=a[j];a[j]=x}return a}
-function mkTop(t,type,arr){return {t:t,items:arr.map(pitem),c:{type:type}}}
 function loadPlex(){
   if(!PL)return;
   pget('/library/sections').then(function(r){
@@ -246,12 +246,7 @@ function loadPlex(){
       var row={t:t,items:x.items,c:{type:d.type==='movie'?'movie':'series'},more:function(n){return pget('/library/sections/'+d.key+'/all','sort=addedAt:desc&X-Plex-Container-Start='+n+'&X-Plex-Container-Size=30').then(function(y){return (y.MediaContainer.Metadata||[]).map(pitem)})}};
       PROWS.push(row);ARMAP[t]=row;
     });
-    var mv=POOLR.filter(function(m){return m.type==='movie'}),sh=POOLR.filter(function(m){return m.type==='show'});
     POOL=POOLR.filter(function(m){return m.thumb&&(m.type==='movie'||m.type==='show')}).map(pitem);
-    var tops=[];
-    if(mv.length)tops.push(mkTop('Top Picks: Movies','movie',shuffle(mv).slice(0,15)));
-    if(sh.length)tops.push(mkTop('Top Picks: Shows','series',shuffle(sh).slice(0,15)));
-    PROWS=tops.concat(PROWS);tops.forEach(function(r){ARMAP[r.t]=r});
     PXST=1;pmsg(PROWS.length?'Your Plex libraries are on the Home page.':'Connected, but no movie or show libraries were found.');
     rerender();
   }).catch(function(){PXST=2;pmsg('Could not load your Plex libraries.');rerender()});
